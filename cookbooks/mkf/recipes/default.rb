@@ -6,13 +6,22 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+gem_package "ruby-shadow"
+gem_package "bundler"
+
+include_recipe "users"
+users_manage "users" do
+  group_id 100
+  action :create
+end
+
 application "mkf_production" do
   path "/var/apps/mkf/production"
   owner "rails"
   group "rails"
 
   repository "git://github.com/meinekleinefarm/shop.git"
-  revision "production"
+  revision "master"
 
   # Apply the rails LWRP from application_ruby
   rails do

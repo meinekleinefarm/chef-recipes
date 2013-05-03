@@ -1,0 +1,10 @@
+{
+  "id": "rails",
+  "password": "$1$anpWKPX0$/qD/ya.JFkgFelC79EddD1",
+  "ssh_keys": ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZtiwnNCwnRxDjDAecTSEQAgEiA04ypxxHx1qViR/uf7biwPHpt2CafdLCWV1lvcGRA5Isd5QoSbxJu70BeWycX/4Um81vfdky1c36fuBCmk5KZ7ps7GUrJkipL3BOjf30coPlnt6UX0c+93KAi25SMzh1doW5SlUqetO+SSvbYYmzmetvwuoPFXzvuTiyeYcGmeee3eleZ9zmDpDVgUcNguvEAIQwGWEiw1CzlUCRLo2bgo063mdTWIIbRZ/FI1KV7zldQdaHzmm3DLQQptmpCVHbH9csKjyBNGh2xK+Beuj0VOX/W1oZBcFAGYZf5WYhJkr0BVDG4XYeEYisnc+1 cb@meinekleinefarm.org"],
+  "groups": [ "sudo", "users"],
+  "uid": 2001,
+  "group_id": 100,
+  "shell": "\/bin\/bash",
+  "comment": "Rails user"
+}
