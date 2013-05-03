@@ -1,0 +1,16 @@
+{
+  "name": "dbserver",
+  "description": "A server that runs a database",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[postgresql::server]",
+    "recipe[postgresql::config_pgtune]"
+  ],
+  "env_run_lists": {
+  }
+}

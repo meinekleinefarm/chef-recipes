@@ -25,6 +25,7 @@ application "mkf_production" do
 
   # Apply the rails LWRP from application_ruby
   rails do
+    bundler true
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
     # database do
@@ -32,6 +33,10 @@ application "mkf_production" do
     #   username "redmine"
     #   password "awesome_password"
     # end
+  end
+
+  nginx_load_balancer do
+    only_if { node['roles'].include?('application') }
   end
 
   # Apply the unicorn LWRP, also from application_ruby
