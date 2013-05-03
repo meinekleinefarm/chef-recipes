@@ -18,11 +18,11 @@ application "mkf_production" do
   rails do
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
-    database do
-      database "redmine"
-      username "redmine"
-      password "awesome_password"
-    end
+    # database do
+    #   database "redmine"
+    #   username "redmine"
+    #   password "awesome_password"
+    # end
   end
 
   # Apply the unicorn LWRP, also from application_ruby
