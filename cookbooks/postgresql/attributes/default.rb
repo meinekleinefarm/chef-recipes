@@ -411,3 +411,5 @@ default['postgresql']['pgdg']['repo_rpm_url'] = {
   },
 };
 
+default['postgresql']['config_pgtune']['db_type']  = "web"
+default['postgresql']['config_pgtune']['total_memory']  = "4194304kB"
