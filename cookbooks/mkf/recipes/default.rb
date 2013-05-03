@@ -2,7 +2,7 @@
 # Cookbook Name:: mkf
 # Recipe:: default
 #
-# Copyright 2013, YOUR_COMPANY_NAME
+# Copyright 2013, MeineKleineFarm UG
 #
 # All rights reserved - Do Not Redistribute
 #
@@ -11,7 +11,7 @@ application "mkf_production" do
   owner "rails"
   group "rails"
 
-  repository "https://github.com/meinekleinefarm/shop.git"
+  repository "git://github.com/meinekleinefarm/shop.git"
   revision "production"
 
   # Apply the rails LWRP from application_ruby
@@ -25,11 +25,11 @@ application "mkf_production" do
     end
   end
 
-  # Apply the passenger_apache2 LWRP, also from application_ruby
+  # Apply the unicorn LWRP, also from application_ruby
   unicorn do
-    # Passenger-specific configuration.
+    # unicorn-specific configuration.
     bundler true
-    worker_processes = 10
-    worker_timeout = 30
+    worker_processes 10
+    worker_timeout 30
   end
 end
