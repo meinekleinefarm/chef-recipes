@@ -36,7 +36,10 @@ application "mkf_production" do
   end
 
   nginx_load_balancer do
-    only_if { node['roles'].include?('application') }
+#    only_if { node['roles'].include?('application') }
+    application_server_role 'application'
+    server_name 'shop.meinekleinefarm.org'
+    application_port 8080
   end
 
   # Apply the unicorn LWRP, also from application_ruby
