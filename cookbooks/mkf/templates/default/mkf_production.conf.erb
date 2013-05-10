@@ -21,7 +21,7 @@ server {
 }
 
 server {
-  listen <%= @resource.port %>;
+  listen <%= @resource.port %> default;
   server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
   <% if @resource.ssl %>
   ssl on;

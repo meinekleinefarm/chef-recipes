@@ -56,6 +56,7 @@ application "mkf_production" do
   # Apply the rails LWRP from application_ruby
   rails do
     bundler true
+    precompile_assets true
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
     database do
