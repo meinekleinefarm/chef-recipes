@@ -1,0 +1,78 @@
+upstream <%= @resource.application.name %> {
+  <% @hosts.each do |node| %>
+  server <%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress'] %>:<%= @resource.application_port %>;
+  <% end %>
+}
+
+# Asset server do not serve rails, but asset files
+server {
+  listen 80;
+  server_name asset0.meinekleinefarm.org asset1.meinekleinefarm.org asset2.meinekleinefarm.org asset3.meinekleinefarm.org;
+  root <%= @resource.application.path %>/current/public;
+
+  expires max;
+  add_header Cache-Control public;
+
+  access_log off;
+
+  location / {
+    # Serve files plz;
+  }
+}
+
+server {
+  listen <%= @resource.port %>;
+  server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
+  <% if @resource.ssl %>
+  ssl on;
+  ssl_certificate <%= @resource.ssl_certificate %>;
+  ssl_certificate_key <%= @resource.ssl_certificate_key %>;
+  <% end %>
+  <% @resource.static_files.each do |url, path| %>
+  location <%= url %> {
+    alias <%= path %>;
+  }
+  <% end %>
+
+  root <%= @resource.application.path %>/current/public;
+
+  keepalive_timeout 5;
+
+  client_max_body_size 4M;
+
+  # Show maintenance page when existent.
+  if (-f $document_root/system/maintenance.html) {
+    rewrite ^(.*)$ /system/maintenance.html break;
+  }
+
+  location / {
+    try_files $uri/index.html $uri.html $uri @unicorn;
+  }
+
+  location @unicorn {
+    # an HTTP header important enough to have its own Wikipedia entry:
+    #   http://en.wikipedia.org/wiki/X-Forwarded-For
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    #  enable this if and only if you use HTTPS, this helps Rack
+    # set the proper protocol for doing redirects:
+    # proxy_set_header X-Forwarded-Proto https;
+
+    # pass the Host: header from the client right along so redirects
+    # can be set properly within the Rack application
+    proxy_set_header Host $http_host;
+
+    # we don't want nginx trying to do something clever with
+    # redirects, we set the Host: header above already.
+    proxy_redirect off;
+
+    # set "proxy_buffering off" *only* for Rainbows! when doing
+    # Comet/long-poll stuff.  It's also safe to set if you're
+    # using only serving fast clients with Unicorn + nginx.
+    # Otherwise you _want_ nginx to buffer responses to slow
+    # clients, really.
+    # proxy_buffering off;
+
+    proxy_pass http://<%= @resource.application.name %>;
+  }
+}

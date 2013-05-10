@@ -15,6 +15,32 @@ users_manage "users" do
   action :create
 end
 
+users_manage "sudo" do
+  group_id 27
+  action :create
+end
+
+db_connection = {
+  :host => "127.0.0.1",
+  :port => 5432,
+  :username => 'postgres',
+  :password => node['postgresql']['password']['postgres']
+}
+
+postgresql_database_user "mkf_production" do
+  connection db_connection
+  password "foobar"
+  database_name 'mkf_production'
+  # privileges [:select,:update,:insert,:delete]
+  action [ :create ] # [:create, :grant]
+end
+
+postgresql_database "mkf_production" do
+  connection db_connection
+  owner "mkf_production"
+  action [ :create ]
+end
+
 application "mkf_production" do
   path "/var/apps/mkf/production"
   owner "rails"
@@ -23,16 +49,35 @@ application "mkf_production" do
   repository "git://github.com/meinekleinefarm/shop.git"
   revision "master"
 
+  # Keep the release for debugging
+  rollback_on_error false
+  migrate true
+
   # Apply the rails LWRP from application_ruby
   rails do
     bundler true
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
-    # database do
-    #   database "redmine"
-    #   username "redmine"
-    #   password "awesome_password"
-    # end
+    database do
+      adapter "postgresql"
+      host "127.0.0.1"
+      port 5432
+      encoding "utf8"
+      reconnect false
+      database "mkf_production"
+      username "mkf_production"
+      password "foobar"
+      pool 5
+    end
+  end
+
+  # Apply the unicorn LWRP, also from application_ruby
+  unicorn do
+    # unicorn-specific configuration.
+    bundler true
+    worker_processes 2
+    worker_timeout 30
+    port '8080'
   end
 
   nginx_load_balancer do
@@ -40,13 +85,7 @@ application "mkf_production" do
     application_server_role 'application'
     server_name 'shop.meinekleinefarm.org'
     application_port 8080
+    template 'mkf_production.conf.erb'
   end
 
-  # Apply the unicorn LWRP, also from application_ruby
-  unicorn do
-    # unicorn-specific configuration.
-    bundler true
-    worker_processes 10
-    worker_timeout 30
-  end
 end
