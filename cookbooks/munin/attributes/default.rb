@@ -19,7 +19,7 @@
 
 default['munin']['sysadmin_email'] = "db@meinekleinefarm.org"
 default['munin']['server_role'] = 'monitoring'
-default['munin']['server_auth_method'] = 'openid'
+default['munin']['server_auth_method'] = 'htauth'
 default['munin']['multi_environment_monitoring'] = false
 
 default['munin']['web_server'] = 'nginx'
