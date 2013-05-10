@@ -24,7 +24,7 @@ default['munin']['multi_environment_monitoring'] = false
 
 default['munin']['web_server'] = 'nginx'
 default['munin']['web_server_port'] = 80
-default['munin']['public_domain'] = nil
+default['munin']['public_domain'] = 'munin.meinekleinefarm.org'
 
 case node['platform']
 when "arch"
