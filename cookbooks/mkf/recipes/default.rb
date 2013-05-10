@@ -32,13 +32,13 @@ postgresql_database_user "mkf_production" do
   password "foobar"
   database_name 'mkf_production'
   # privileges [:select,:update,:insert,:delete]
-  action [ :create ] # [:create, :grant]
+  action :create
 end
 
 postgresql_database "mkf_production" do
   connection db_connection
   owner "mkf_production"
-  action [ :create ]
+  action :create
 end
 
 application "mkf_production" do
@@ -51,14 +51,28 @@ application "mkf_production" do
 
   # Keep the release for debugging
   rollback_on_error false
-  migrate true
+  action :force_deploy
+
+  migrate false
+
+  symlinks 'production.log' => 'log/production.log'
+  before_symlink do
+    directory "#{new_resource.shared_path}/log" do
+      owner new_resource.owner
+      group new_resource.group
+      mode '755'
+      action :create
+    end
+  end
 
   # Apply the rails LWRP from application_ruby
   rails do
-    bundler true
-    precompile_assets true
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
+
+    bundler true
+    precompile_assets true
+
     database do
       adapter "postgresql"
       host "127.0.0.1"
@@ -68,7 +82,7 @@ application "mkf_production" do
       database "mkf_production"
       username "mkf_production"
       password "foobar"
-      pool 5
+      pool 10
     end
   end
 
