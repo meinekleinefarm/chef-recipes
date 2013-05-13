@@ -81,8 +81,6 @@ server {
   ssl on;
   ssl_certificate <%= @resource.ssl_certificate %>;
   ssl_certificate_key <%= @resource.ssl_certificate_key %>;
-  ssl_protocolsSSLv3    TLSv1;
-  ssl_ciphers           ALL:-ADH:+HIGH:+MEDIUM:-LOW:-SSLv2:-EXP;
   ssl_session_cache     shared:SSL:10m;
 
   keepalive_timeout 10;
