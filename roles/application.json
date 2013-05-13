@@ -10,6 +10,7 @@
   "run_list": [
     "recipe[xml]",
     "recipe[imagemagick]",
+    "recipe[memcached]",
     "recipe[nginx]",
     "recipe[munin::nginx]",
     "recipe[unicorn]",
