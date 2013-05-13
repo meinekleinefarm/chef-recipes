@@ -11,9 +11,10 @@
     "recipe[users]",
     "recipe[git]",
     "recipe[vim]",
-    "recipe[fail2ban]",
     "recipe[ntp]",
-    "recipe[munin::client]"
+    "recipe[munin::client]",
+    "recipe[fail2ban]",
+    "recipe[munin::fail2ban]"
   ],
   "env_run_lists": {
   }
