@@ -8,7 +8,9 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[git]"
+    "recipe[git]",
+    "recipe[vim]",
+    "recipe[munin::client]"
   ],
   "env_run_lists": {
   }
