@@ -97,9 +97,9 @@ application "mkf_production" do
   end
 
   nginx_load_balancer do
-    # ssl true
-    # ssl_certificate '/etc/ssl/certs/shop_meinekleinefarm_org.crt'
-    # ssl_certificate_key '/etc/ssl/private/shop_meinekleinefarm_org.key'
+    ssl true
+    ssl_certificate '/etc/ssl/certs/shop_meinekleinefarm_org.crt'
+    ssl_certificate_key '/etc/ssl/private/shop_meinekleinefarm_org.key'
 #    only_if { node['roles'].include?('application') }
     application_server_role 'application'
     server_name 'shop.meinekleinefarm.org'
