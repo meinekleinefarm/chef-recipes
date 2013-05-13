@@ -14,7 +14,9 @@
     "recipe[ntp]",
     "recipe[munin::client]",
     "recipe[fail2ban]",
-    "recipe[munin::fail2ban]"
+    "recipe[munin::fail2ban]",
+    "recipe[monit]",
+    "recipe[monit::ssh]"
   ],
   "env_run_lists": {
   }
