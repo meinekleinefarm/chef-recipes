@@ -11,6 +11,7 @@
     "recipe[xml]",
     "recipe[imagemagick]",
     "recipe[nginx]",
+    "recipe[munin::nginx]",
     "recipe[unicorn]",
     "recipe[mkf]"
   ],
