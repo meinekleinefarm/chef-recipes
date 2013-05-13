@@ -8,8 +8,9 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[postgresql::server]",
-    "recipe[postgresql::config_pgtune]"
+    "recipe[database::postgresql]",
+    "recipe[postgresql::config_pgtune]",
+    "recipe[munin::postgresql]"
   ],
   "env_run_lists": {
   }
