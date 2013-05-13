@@ -11,6 +11,7 @@
     "recipe[users]",
     "recipe[git]",
     "recipe[vim]",
+    "recipe[fail2ban]",
     "recipe[ntp]",
     "recipe[munin::client]"
   ],
