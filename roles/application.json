@@ -8,9 +8,7 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[users]",
     "recipe[xml]",
-    "recipe[git]",
     "recipe[imagemagick]",
     "recipe[nginx]",
     "recipe[unicorn]",
