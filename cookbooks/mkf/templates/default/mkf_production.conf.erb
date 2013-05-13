@@ -40,6 +40,13 @@ server {
     rewrite ^(.*)$ /system/maintenance.html break;
   }
 
+  # No extra asset subdomain in ssl mode
+  location ^~ /assets/ {
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
+
   location / {
     try_files $uri/index.html $uri.html $uri @unicorn;
   }
@@ -94,6 +101,10 @@ server {
     gzip_static on;
     expires max;
     add_header Cache-Control public;
+  }
+
+  location / {
+    try_files $uri/index.html $uri.html $uri @unicorn;
   }
 
   location @unicorn {
