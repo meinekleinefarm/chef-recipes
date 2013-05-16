@@ -1,7 +1,7 @@
 default[:monit][:notify_email]          = "webmaster@meinekleinefarm.org"
 
 default[:monit][:poll_period]           = 60
-default[:monit][:poll_start_delay]      = 120
+default[:monit][:poll_start_delay]      = 10
 
 default[:monit][:mail_format][:subject] = "$SERVICE $EVENT"
 default[:monit][:mail_format][:from]    = "monit@#{node['fqdn']}"
@@ -17,8 +17,8 @@ default[:monit][:mailserver][:username] = nil
 default[:monit][:mailserver][:password] = nil
 default[:monit][:mailserver][:password_suffix] = nil
 
-default[:monit][:port] = 3737
-default[:monit][:address] = "localhost"
-default[:monit][:ssl] = false
-default[:monit][:cert] = "/etc/monit/monit.pem"
+default[:monit][:port] = 2812
+default[:monit][:address] = "monit.meinekleinefarm.org"
+default[:monit][:ssl] = true
+default[:monit][:cert] = "/etc/ssl/certs/monit.pem"
 default[:monit][:allow] = ["localhost"]
