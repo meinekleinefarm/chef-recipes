@@ -54,11 +54,28 @@ application "mkf_production" do
   # action :force_deploy
   action :deploy
 
-  migrate false
+  migrate true
 
-  symlinks 'production.log' => 'log/production.log'
+  create_dirs_before_symlink  ["tmp"]
+  purge_before_symlink        ["log", "tmp/pids", "public/system"]
+  symlink_before_migrate      "config/database.yml" => "config/database.yml"
+  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log"
+
   before_symlink do
     directory "#{new_resource.shared_path}/log" do
+      owner new_resource.owner
+      group new_resource.group
+      mode '755'
+      action :create
+    end
+    directory "#{new_resource.shared_path}/system" do
+      owner new_resource.owner
+      group new_resource.group
+      mode '755'
+      action :create
+    end
+
+    directory "#{new_resource.shared_path}/pids" do
       owner new_resource.owner
       group new_resource.group
       mode '755'

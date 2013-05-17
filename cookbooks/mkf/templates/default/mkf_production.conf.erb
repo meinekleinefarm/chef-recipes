@@ -9,11 +9,13 @@ server {
   listen 80;
   server_name asset0.meinekleinefarm.org asset1.meinekleinefarm.org asset2.meinekleinefarm.org asset3.meinekleinefarm.org;
   root <%= @resource.application.path %>/current/public;
+  access_log /var/log/nginx/<%= @resource.application.name %>_access.log  combined  buffer=4k;
+
+  error_log  /var/log/nginx/<%= @resource.application.name %>_error.log;
+
 
   expires max;
   add_header Cache-Control public;
-
-  access_log off;
 
   location / {
     # Serve files plz;
