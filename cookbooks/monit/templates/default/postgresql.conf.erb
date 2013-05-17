@@ -1,0 +1,10 @@
+# managed by chef, changes will be overwritten
+CHECK PROCESS postgresql WITH PIDFILE /var/run/postgresql/9.1-main.pid
+  GROUP database
+  START PROGRAM "/usr/sbin/service postgresql start"
+  STOP PROGRAM "/usr/sbin/service postgresql stop"
+# IF FAILED unixsocket /tmp/.s.PGSQL.5432 PROTOCOL pgsql THEN RESTART
+# IF FAILED unixsocket /tmp/.s.PGSQL.5432 PROTOCOL pgsql THEN ALERT
+IF FAILED HOST localhost PORT 5432 PROTOCOL pgsql THEN RESTART
+IF FAILED HOST localhost PORT 5432 PROTOCOL pgsql THEN ALERT
+IF 5 restarts WITHIN 5 CYCLES THEN timeout

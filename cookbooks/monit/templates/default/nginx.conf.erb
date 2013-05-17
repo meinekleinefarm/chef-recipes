@@ -1,0 +1,15 @@
+CHECK PROCESS nginx WITH pidfile /var/run/nginx.pid
+  GROUP www-data
+  START PROGRAM "/usr/sbin/service nginx start"
+  STOP PROGRAM "/usr/sbin/service nginx stop"
+  IF CHILDREN > 250 THEN restart
+  IF loadavg(5min) GREATER THAN 8 FOR 5 CYCLES THEN RESTART
+  IF 3 RESTARTS WITHIN 5 CYCLES THEN TIMEOUT
+
+## Test the init scripts.
+CHECK FILE nginx_init WITH PATH /etc/init.d/nginx
+  group www-data
+  IF FAILED checksum THEN unmonitor
+  IF FAILED permission 755 THEN unmonitor
+  IF FAILED uid root THEN unmonitor
+  IF FAILED gid root THEN unmonitor
