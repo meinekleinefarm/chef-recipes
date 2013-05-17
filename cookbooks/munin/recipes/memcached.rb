@@ -12,7 +12,7 @@ cpan_module "Cache::Memcached"
   memcached_traffic_
 ).each do |plugin_name|
   munin_plugin plugin_name do
-    plugin "#{plugin_name}#{node[:ipaddress].gsub('.','_')}_#{node[:memcached][:port]}"
+    plugin "#{plugin_name}127_0_0_1_#{node[:memcached][:port]}"
     create_file true
   end
 end
