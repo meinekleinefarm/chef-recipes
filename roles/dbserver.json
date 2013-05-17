@@ -10,7 +10,8 @@
   "run_list": [
     "recipe[database::postgresql]",
     "recipe[postgresql::config_pgtune]",
-    "recipe[munin::postgresql]"
+    "recipe[munin::postgresql]",
+    "recipe[monit::postgresql]"
   ],
   "env_run_lists": {
   }

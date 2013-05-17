@@ -11,8 +11,11 @@
     "recipe[xml]",
     "recipe[imagemagick]",
     "recipe[memcached]",
+    "recipe[munin::memcached]",
+    "recipe[monit::memcached]",
     "recipe[nginx]",
     "recipe[munin::nginx]",
+    "recipe[monit::nginx]",
     "recipe[unicorn]",
     "recipe[mkf]"
   ],
