@@ -14,6 +14,7 @@
     "recipe[ntp]",
     "recipe[munin::client]",
     "recipe[munin::packages]",
+    "recipe[munin::disks]",
     "recipe[fail2ban]",
     "recipe[munin::fail2ban]",
     "recipe[monit]",
