@@ -16,3 +16,7 @@ cpan_module "Cache::Memcached"
     create_file true
   end
 end
+
+munin_plugin "memcached_" do
+  plugin "memcached_127_0_0_1_#{node[:memcached][:port]}"
+end

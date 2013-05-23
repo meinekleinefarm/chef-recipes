@@ -19,11 +19,12 @@
 
 if node['munin']['multi_environment_monitoring']
   munin_servers = search(:node, "role:#{node['munin']['server_role']}")
-else  
+else
   munin_servers = search(:node, "role:#{node['munin']['server_role']} AND chef_environment:#{node.chef_environment}")
 end
 
 package "munin-node"
+package "munin-plugins-extra"
 
 service_name = node['munin']['service_name']
 
