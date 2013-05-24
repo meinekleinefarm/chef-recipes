@@ -58,7 +58,7 @@ application "mkf_production" do
 
   create_dirs_before_symlink  ["tmp"]
   purge_before_symlink        ["log", "tmp/pids", "public/system"]
-  symlink_before_migrate      "config/database.yml" => "config/database.yml"
+  symlink_before_migrate      "config/database.yml" => "config/database.yml", "config/memcached.yml" => "config/memcached.yml"
   symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log"
 
   before_symlink do
@@ -111,6 +111,14 @@ application "mkf_production" do
     worker_processes 2
     worker_timeout 30
     port '8080'
+  end
+
+  memcached do
+    role "memcached_master"
+    options do
+      ttl 1800
+      memory 256
+    end
   end
 
   nginx_load_balancer do
