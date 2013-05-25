@@ -18,7 +18,8 @@
     "recipe[fail2ban]",
     "recipe[munin::fail2ban]",
     "recipe[monit]",
-    "recipe[monit::ssh]"
+    "recipe[monit::ssh]",
+    "recipe[motd-tail]"
   ],
   "env_run_lists": {
   }
