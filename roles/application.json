@@ -13,6 +13,7 @@
     "recipe[nginx]",
     "recipe[munin::nginx]",
     "recipe[monit::nginx]",
+    "recipe[firewall::nginx]",
     "recipe[unicorn]",
     "recipe[mkf]"
   ],

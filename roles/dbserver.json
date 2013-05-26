@@ -11,7 +11,8 @@
     "recipe[database::postgresql]",
     "recipe[postgresql::config_pgtune]",
     "recipe[munin::postgresql]",
-    "recipe[monit::postgresql]"
+    "recipe[monit::postgresql]",
+    "recipe[firewall::postgresql]"
   ],
   "env_run_lists": {
   }

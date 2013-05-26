@@ -12,6 +12,8 @@
     "recipe[git]",
     "recipe[vim]",
     "recipe[ntp]",
+    "recipe[firewall]",
+    "recipe[firewall::ssh]",
     "recipe[munin::client]",
     "recipe[munin::packages]",
     "recipe[munin::disks]",
@@ -19,6 +21,7 @@
     "recipe[munin::fail2ban]",
     "recipe[monit]",
     "recipe[monit::ssh]",
+    "recipe[firewall::monit]",
     "recipe[motd-tail]"
   ],
   "env_run_lists": {
