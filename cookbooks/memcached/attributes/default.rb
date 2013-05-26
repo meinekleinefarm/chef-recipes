@@ -19,7 +19,7 @@
 
 default['memcached']['memory'] = 256
 default['memcached']['port'] = 11211
-default['memcached']['listen'] = "127.0.0.1"
+default['memcached']['listen'] = node[:ipaddress]
 default['memcached']['maxconn'] = 1024
 case node['platform_family']
 when 'suse', 'fedora', 'rhel'
