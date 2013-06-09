@@ -22,7 +22,8 @@
     "recipe[monit]",
     "recipe[monit::ssh]",
     "recipe[firewall::monit]",
-    "recipe[motd-tail]"
+    "recipe[motd-tail]",
+    "recipe[chef-client]"
   ],
   "env_run_lists": {
   }

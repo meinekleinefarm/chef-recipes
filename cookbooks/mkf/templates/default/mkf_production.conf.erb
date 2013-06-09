@@ -90,6 +90,7 @@ server {
   ssl on;
   ssl_certificate <%= @resource.ssl_certificate %>;
   ssl_certificate_key <%= @resource.ssl_certificate_key %>;
+  ssl_verify_depth 3;
   ssl_session_cache     shared:SSL:10m;
 
   keepalive_timeout 10;
