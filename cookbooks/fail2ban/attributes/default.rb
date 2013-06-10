@@ -2,7 +2,7 @@
 # Cookbook Name:: fail2ban
 # Attributes:: default
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 # fail2ban.conf configuration options
 default['fail2ban']['loglevel'] = 3
-default['fail2ban']['socket'] = "/tmp/fail2ban.sock"
+default['fail2ban']['socket'] = "/var/run/fail2ban/fail2ban.sock"
 default['fail2ban']['logtarget'] = "/var/log/fail2ban.log"
 
 # These values will only be printed to fail2ban.conf
@@ -27,7 +27,12 @@ default['fail2ban']['syslog_target'] = "/var/log/fail2ban.log"
 default['fail2ban']['syslog_facility'] = "1"
 
 # jail.conf configuration options
+default['fail2ban']['ignoreip'] = "127.0.0.1/8"
 default['fail2ban']['bantime'] = 300
 default['fail2ban']['maxretry'] = 5
-default['fail2ban']['email'] = 'root@localhost'
 default['fail2ban']['backend'] = 'polling'
+default['fail2ban']['email'] = 'root@localhost'
+default['fail2ban']['banaction'] = 'iptables-multiport'
+default['fail2ban']['mta'] = 'sendmail'
+default['fail2ban']['protocol'] = 'tcp'
+default['fail2ban']['chain'] = 'INPUT'
