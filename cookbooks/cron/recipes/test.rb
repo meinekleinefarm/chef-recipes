@@ -1,14 +1,14 @@
 #
 # Cookbook Name:: cron
-# Recipe:: default
+# Recipe:: test
 #
-# Copyright 2010-2013, Opscode, Inc.
+# Copyright:: (c) 2012, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +17,11 @@
 # limitations under the License.
 #
 
-package 'cron' do
-  package_name case node['platform_family']
-               when 'rhel', 'fedora'
-                 node['platform_version'].to_f >= 6.0 ? 'cronie' : 'vixie-cron'
-               end
-end
+include_recipe "cron"
 
-service 'cron' do
-  service_name 'crond' if platform_family?('rhel', 'fedora')
-  action [:enable, :start]
+cron_d "daily-usage-report" do
+  minute 0
+  hour 23
+  command "/srv/app/scripts/daily_report"
+  user "appuser"
 end
