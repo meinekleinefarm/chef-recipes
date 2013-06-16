@@ -1,3 +1,19 @@
+## v1.3.4:
+
+### Bug
+
+- [COOK-3137]: `python_pip` LWRP cannot have differnent name and
+  `package_name`
+
+## v1.3.2:
+
+### Bug
+
+- [COOK-2917]: python::source fails on CentOS 6.3 minimal (make:
+  command not found)
+- [COOK-3077]: Python - pip fails to install when
+  `['python']['install_method'] == 'source'`
+
 ## v1.3.0:
 
 ### Bug
