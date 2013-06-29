@@ -1,0 +1,67 @@
+upstream <%= @resource.application.name %> {
+  <% @hosts.each do |node| %>
+  server <%= node.attribute?('cloud') ? node['cloud']['local_ipv4'] : node['ipaddress'] %>:<%= @resource.application_port %>;
+  <% end %>
+}
+
+server {
+  listen <%= @resource.port %>;
+  server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
+  <% @resource.static_files.each do |url, path| %>
+  location <%= url %> {
+    alias <%= path %>;
+  }
+  <% end %>
+
+  root <%= @resource.application.path %>/current/public;
+
+  error_log  /var/log/nginx/mkf_backend_error.log;
+
+  keepalive_timeout 10;
+
+  client_max_body_size 4M;
+
+  # Show maintenance page when existent.
+  if (-f $document_root/system/maintenance.html) {
+    rewrite ^(.*)$ /system/maintenance.html break;
+  }
+
+  # No extra asset subdomain in ssl mode
+  location ^~ /assets/ {
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
+
+  location / {
+    try_files $uri/index.html $uri.html $uri @unicorn;
+  }
+
+  location @unicorn {
+    proxy_set_header  X-Real-IP       $remote_addr;
+    # an HTTP header important enough to have its own Wikipedia entry:
+    #   http://en.wikipedia.org/wiki/X-Forwarded-For
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    #  enable this if and only if you use HTTPS, this helps Rack
+    # set the proper protocol for doing redirects:
+    # proxy_set_header X-Forwarded-Proto https;
+
+    # pass the Host: header from the client right along so redirects
+    # can be set properly within the Rack application
+    proxy_set_header Host $http_host;
+
+    # we don't want nginx trying to do something clever with
+    # redirects, we set the Host: header above already.
+    proxy_redirect off;
+
+    # set "proxy_buffering off" *only* for Rainbows! when doing
+    # Comet/long-poll stuff.  It's also safe to set if you're
+    # using only serving fast clients with Unicorn + nginx.
+    # Otherwise you _want_ nginx to buffer responses to slow
+    # clients, really.
+    # proxy_buffering off;
+
+    proxy_pass http://<%= @resource.application.name %>;
+  }
+}
