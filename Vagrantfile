@@ -26,7 +26,9 @@ Vagrant.configure("2") do |config|
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  # config.vm.network :public_network
+  config.vm.network :public_network, :bridge => "vnic0"
+  # config.vm.network :bridged, :bridge => "vnic0"
+
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -38,13 +40,13 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider :virtualbox do |vb|
+  config.vm.provider :virtualbox do |vb|
   #   # Don't boot with headless mode
   #   vb.gui = true
   #
   #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
   #
   # View the documentation for the provider you're using for more
   # information on available options.
@@ -72,18 +74,20 @@ Vagrant.configure("2") do |config|
   #   puppet.manifest_file  = "init.pp"
   # end
 
+  config.vm.provision :shell, :path => "bootstrap.sh"
+
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
-  # config.vm.provision :chef_solo do |chef|
-  #   chef.cookbooks_path = "cookbooks"
-  #   chef.roles_path = "roles"
-  #   chef.data_bags_path = "data_bags"
-  #   chef.add_role "base"
-  #   # You may also specify custom JSON attributes:
-  #   # chef.json = { :mysql_password => "foo" }
-  # end
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = "cookbooks"
+    chef.roles_path = "roles"
+    chef.data_bags_path = "data_bags"
+    chef.add_role "base"
+    # You may also specify custom JSON attributes:
+    # chef.json = { :mysql_password => "foo" }
+  end
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
@@ -95,19 +99,19 @@ Vagrant.configure("2") do |config|
   # HTTP instead of HTTPS depending on your configuration. Also change the
   # validation key to validation.pem.
   #
-  config.vm.provision :chef_client do |chef|
-   chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
-   chef.validation_key_path = ".chef/mkf-validator.pem"
-   chef.add_role("base")
-
-   #
-   # If you're using the Opscode platform, your validator client is
-   # ORGNAME-validator, replacing ORGNAME with your organization name.
-   #
-
-   # If you have your own Chef Server, the default validation client name is
-   # chef-validator, unless you changed the configuration.
-   #
-   chef.validation_client_name = "mkf-validator"
-  end
+  # config.vm.provision :chef_client do |chef|
+  #  chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
+  #  chef.validation_key_path = ".chef/mkf-validator.pem"
+  #  chef.add_role("base")
+  #
+  #  #
+  #  # If you're using the Opscode platform, your validator client is
+  #  # ORGNAME-validator, replacing ORGNAME with your organization name.
+  #  #
+  #
+  #  # If you have your own Chef Server, the default validation client name is
+  #  # chef-validator, unless you changed the configuration.
+  #  #
+  #  chef.validation_client_name = "mkf-validator"
+  # end
 end
