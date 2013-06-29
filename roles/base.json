@@ -19,9 +19,6 @@
     "recipe[munin::disks]",
     "recipe[fail2ban]",
     "recipe[munin::fail2ban]",
-    "recipe[monit]",
-    "recipe[monit::ssh]",
-    "recipe[firewall::monit]",
     "recipe[motd-tail]",
     "recipe[chef-client]"
   ],

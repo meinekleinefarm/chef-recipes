@@ -15,7 +15,8 @@
     "recipe[monit::nginx]",
     "recipe[firewall::nginx]",
     "recipe[unicorn]",
-    "recipe[mkf]"
+    "recipe[mkf]",
+    "recipe[mkf::backend]"
   ],
   "env_run_lists": {
   }
