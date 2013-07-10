@@ -15,6 +15,7 @@ server {
 
   root <%= @resource.application.path %>/current/public;
 
+  access_log  /var/log/nginx/mkf_backend_access.log;
   error_log  /var/log/nginx/mkf_backend_error.log;
 
   keepalive_timeout 10;

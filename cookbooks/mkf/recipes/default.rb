@@ -8,6 +8,21 @@
 #
 gem_package "ruby-shadow"
 gem_package "bundler"
+include_recipe "rbenv::default"
+include_recipe "rbenv::ruby_build"
+
+rbenv_ruby "1.9.3-p429"
+rbenv_ruby "1.8.7-p371"
+
+%w{bundler rake ruby-shadow}.each do |gem_name|
+  rbenv_gem gem_name do
+    ruby_version "1.9.3-p429"
+  end
+
+  rbenv_gem gem_name do
+    ruby_version "1.8.7-p371"
+  end
+end
 
 include_recipe "users"
 users_manage "users" do
