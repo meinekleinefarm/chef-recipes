@@ -20,5 +20,5 @@ default[:monit][:mailserver][:password_suffix] = nil
 default[:monit][:port] = 2812
 default[:monit][:address] = "monit.meinekleinefarm.org"
 default[:monit][:ssl] = true
-default[:monit][:cert] = "/etc/ssl/certs/monit.pem"
+default[:monit][:cert] = "/etc/ssl/certs/monit.meinekleinefarm.org.pem"
 default[:monit][:allow] = ["localhost"]

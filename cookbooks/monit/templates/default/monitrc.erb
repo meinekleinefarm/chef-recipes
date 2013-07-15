@@ -28,7 +28,7 @@ set alert <%= @node[:monit][:notify_email] %> NOT ON { action, instance, pid, pp
 set httpd port <%= node[:monit][:port] %>
   <%= "use address #{node[:monit][:address]}" if node[:monit][:address] %>
 <% node[:monit][:allow].each do |a| %>
-  allow crypt /etc/munin/htpasswd.users admin rails
+  allow crypt /etc/monit/htpasswd.users
   # allow <%= "#{a}" %>
 <% end %>
 <% if node[:monit][:ssl] %>
