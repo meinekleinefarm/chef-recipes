@@ -67,7 +67,7 @@ default['openssh']['client']['forward_x11'] = "no"
 # default['openssh']['client']['visual_host_key'] = "no"
 # default['openssh']['client']['proxy_command'] = "ssh -q -W %h:%p gateway.example.com"
 # sshd config group
-default['openssh']['server']['port'] = "22022"
+default['openssh']['server']['port'] = "22"
 # default['openssh']['server']['address_family'] = "any"
 # default['openssh']['server']['listen_address'] = [ "0.0.0.0 ::" ]
 # default['openssh']['server']['protocol'] = "2"
