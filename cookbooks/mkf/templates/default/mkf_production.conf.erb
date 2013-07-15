@@ -50,7 +50,7 @@ server {
   }
 
   location / {
-    try_files $uri/index.html $uri.html $uri @unicorn;
+    try_files $uri $uri/index.html @unicorn;
   }
 
   location @unicorn {
@@ -107,7 +107,7 @@ server {
   }
 
   location / {
-    try_files $uri/index.html $uri.html $uri @unicorn;
+    try_files $uri $uri/index.html @unicorn;
   }
 
   location @unicorn {
