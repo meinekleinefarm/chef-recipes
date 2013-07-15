@@ -1,0 +1,22 @@
+{
+  "name": "mkf_shop_application_server",
+  "description": "Application server for the mkf shop",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[xml]",
+    "recipe[imagemagick]",
+    "recipe[nginx]",
+    "recipe[munin::nginx]",
+    "recipe[monit::nginx]",
+    "recipe[firewall::nginx]",
+    "recipe[unicorn]",
+    "recipe[mkf::shop]"
+  ],
+  "env_run_lists": {
+  }
+}

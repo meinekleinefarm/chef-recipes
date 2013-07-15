@@ -1,0 +1,17 @@
+{
+  "name": "mkf_shop_database_server",
+  "description": "DB server for the mkf shop",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[postgresql::server]",
+    "recipe[postgresql::ruby]",
+    "recipe[mkf::shop_db]"
+  ],
+  "env_run_lists": {
+  }
+}

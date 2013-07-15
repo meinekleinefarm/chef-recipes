@@ -35,27 +35,6 @@ users_manage "sudo" do
   action :create
 end
 
-db_connection = {
-  :host => "127.0.0.1",
-  :port => 5432,
-  :username => 'postgres',
-  :password => node['postgresql']['password']['postgres']
-}
-
-postgresql_database_user "mkf_production" do
-  connection db_connection
-  password "foobar"
-  database_name 'mkf_production'
-  # privileges [:select,:update,:insert,:delete]
-  action :create
-end
-
-postgresql_database "mkf_production" do
-  connection db_connection
-  owner "mkf_production"
-  action :create
-end
-
 application "mkf_production" do
   path "/var/apps/mkf/production"
   owner "rails"
@@ -141,8 +120,7 @@ application "mkf_production" do
     ssl true
     ssl_certificate '/etc/ssl/certs/shop_meinekleinefarm_org.crt'
     ssl_certificate_key '/etc/ssl/private/shop_meinekleinefarm_org.key'
-#    only_if { node['roles'].include?('application') }
-    application_server_role 'application'
+    application_server_role 'mkf_shop_application_server'
     server_name 'shop.meinekleinefarm.org'
     application_port 8080
     template 'mkf_production.conf.erb'
