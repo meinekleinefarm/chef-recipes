@@ -23,29 +23,76 @@ node.set[:rbenv][:root]          = rbenv_root
 node.set[:ruby_build][:prefix]   = node[:rbenv][:root]
 node.set[:ruby_build][:bin_path] = rbenv_binary_path
 
-include_recipe "rbenv::package_requirements"
+case node[:platform]
+when "ubuntu", "debian"
+  include_recipe "apt"
+end
 
-group "rbenv" do
+include_recipe "build-essential"
+include_recipe "git"
+package "curl"
+
+case node[:platform]
+when "redhat", "centos", "amazon", "oracle"
+  # TODO: add as per "rvm requirements"
+  package "openssl-devel"
+  package "zlib-devel"
+  package "readline-devel"
+when "ubuntu", "debian"
+  package "libc6-dev"
+  package "automake"
+  package "libtool"
+
+  # https://github.com/sstephenson/ruby-build/issues/119
+  # "It seems your ruby installation is missing psych (for YAML
+  # output). To eliminate this warning, please install libyaml and
+  # reinstall your ruby."
+  package 'libyaml-dev'
+
+  # needed to unpack rubygems
+  package 'zlib1g'
+  package 'zlib1g-dev'
+
+  # openssl support for ruby
+  package "openssl"
+  package 'libssl-dev'
+
+  # readline for irb and rails console
+  package "libreadline-dev"
+
+  # for ruby stdlib rexml and nokogiri
+  # http://nokogiri.org/tutorials/installing_nokogiri.html
+  package "libxml2-dev"
+  package "libxslt1-dev"
+
+  # better irb support
+  package "ncurses-dev"
+
+  # for searching packages
+  package "pkg-config"
+end
+
+group node[:rbenv][:group] do
   members node[:rbenv][:group_users] if node[:rbenv][:group_users]
 end
 
-user "rbenv" do
+user node[:rbenv][:user] do
   shell "/bin/bash"
-  group "rbenv"
-  supports :manage_home => true
+  group node[:rbenv][:group]
+  supports :manage_home => node[:rbenv][:manage_home]
 end
 
 directory node[:rbenv][:root] do
-  owner "rbenv"
-  group "rbenv"
+  owner node[:rbenv][:user]
+  group node[:rbenv][:group]
   mode "0775"
 end
 
 git node[:rbenv][:root] do
   repository node[:rbenv][:git_repository]
   reference node[:rbenv][:git_revision]
-  user "rbenv"
-  group "rbenv"
+  user node[:rbenv][:user]
+  group node[:rbenv][:group]
   action :sync
 
   notifies :create, "template[/etc/profile.d/rbenv.sh]", :immediately
@@ -76,8 +123,8 @@ end
 # check https://github.com/sstephenson/rbenv/blob/master/libexec/rbenv-init#L71
 %w{shims versions plugins}.each do |dir_name|
   directory "#{node[:rbenv][:root]}/#{dir_name}" do
-    owner "rbenv"
-    group "rbenv"
+    owner node[:rbenv][:user]
+    group node[:rbenv][:group]
     mode "0775"
     action [:create]
   end
