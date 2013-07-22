@@ -7,12 +7,23 @@ Vagrant.configure("2") do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  #config.vm.box = "opscode-ubuntu-1204"
-  config.vm.box = "precise64"
-
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04-i386_chef-11.4.4.box"
+
+  # set auto_update to false, if do NOT want to check the correct additions
+  # version when booting this machine
+  config.vbguest.auto_update = false
+
+  # do NOT download the iso file from a webserver
+  config.vbguest.no_remote = true
+
+  # Official Ubuntu 12.04 daily Cloud Image amd64 (No Guest Additions)
+  config.vm.box = "precise64"
+  config.vm.box_url = "http://cloud-images.ubuntu.com/precise/current/precise-server-cloudimg-vagrant-amd64-disk1.box"
+
+
+  # config.vm.box = "opscode-ubuntu-1204"
+  # config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04-i386_chef-11.4.4.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -44,8 +55,10 @@ Vagrant.configure("2") do |config|
   #   # Don't boot with headless mode
   #   vb.gui = true
   #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "1024"]
+  # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
   #
   # View the documentation for the provider you're using for more
@@ -74,12 +87,27 @@ Vagrant.configure("2") do |config|
   #   puppet.manifest_file  = "init.pp"
   # end
 
-  $provision_script= <<SCRIPT
-  if [[ $(which chef-client) != '/usr/bin/chef-client' ]]; then
-    wget --quiet https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.0-1.ubuntu.11.04_amd64.deb
-    dpkg -i chef_11.4.0-1.ubuntu.11.04_amd64.deb
-    echo 'export PATH="/opt/chef/embedded/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.0-1.ubuntu.11.04_amd64.deb
+  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.2-1.ubuntu.11.04_amd64.deb
+  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.4-2.ubuntu.11.04_amd64.deb
+#   $provision_script = <<SCRIPT
+#   if [[ $(which chef-client) != '/usr/bin/chef-client' ]]; then
+#     wget --quiet https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.4-2.ubuntu.11.04_amd64.deb
+#     dpkg -i chef_11.4.4-2.ubuntu.11.04_amd64.deb
+#     echo 'export PATH="/opt/chef/embedded/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+#   fi
+# SCRIPT
+
+  $provision_script = <<SCRIPT
+  if [ ! -f /usr/local/bin/chef-client ]; then
+    aptitude update
+    aptitude install -y ruby ruby1.8-dev build-essential wget libruby1.8 rubygems
+
+    gem update --no-rdoc --no-ri
+    gem install ohai --no-rdoc --no-ri --verbose
+    gem install chef --no-rdoc --no-ri --verbose -v11.4.0
   fi
+
 SCRIPT
 
   config.vm.provision :shell, :inline => $provision_script
@@ -110,7 +138,11 @@ SCRIPT
   config.vm.provision :chef_client do |chef|
     chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
     chef.validation_key_path = ".chef/mkf-validator.pem"
+    chef.encrypted_data_bag_secret_key_path = 'bootstrap/encrypted_data_bag_secret'
     chef.add_role("base")
+    chef.add_role("memcached_master")
+    chef.add_role("mkf_shop_database_server")
+    chef.add_role("mkf_shop_application_server")
 
     #
     # If you're using the Opscode platform, your validator client is
