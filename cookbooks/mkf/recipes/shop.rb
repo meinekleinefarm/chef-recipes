@@ -11,16 +11,13 @@ gem_package "bundler"
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
-rbenv_ruby "1.9.3-p429"
-rbenv_ruby "1.8.7-p371"
+rbenv_ruby "1.9.3-p448" do
+  ruby_version "1.9.3-p448"
+end
 
-%w{bundler rake ruby-shadow}.each do |gem_name|
+%w{bundler rake ruby-shadow pg}.each do |gem_name|
   rbenv_gem gem_name do
-    ruby_version "1.9.3-p429"
-  end
-
-  rbenv_gem gem_name do
-    ruby_version "1.8.7-p371"
+    ruby_version "1.9.3-p448"
   end
 end
 
@@ -53,7 +50,7 @@ application "mkf_production" do
 
   create_dirs_before_symlink  ["tmp"]
   purge_before_symlink        ["log", "tmp/pids", "public/system"]
-  symlink_before_migrate      "config/database.yml" => "config/database.yml", "config/memcached.yml" => "config/memcached.yml"
+  symlink_before_migrate      "database.yml" => "config/database.yml", "memcached.yml" => "config/memcached.yml"
   symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log"
 
   before_symlink do
@@ -86,15 +83,18 @@ application "mkf_production" do
     bundler true
     precompile_assets true
 
+
+    # database_master_role "mkf_shop_database_server"
+    db_creds = Chef::EncryptedDataBagItem.load("passwords", "mkf_shop_db")
+
     database do
       adapter "postgresql"
-      host "127.0.0.1"
-      port 5432
-      encoding "utf8"
+      host "localhost"
+      encoding "unicode"
       reconnect false
       database "mkf_production"
       username "mkf_production"
-      password "foobar"
+      password db_creds["password"]
       pool 10
     end
   end
@@ -117,7 +117,7 @@ application "mkf_production" do
   end
 
   nginx_load_balancer do
-    ssl true
+    ssl false
     ssl_certificate '/etc/ssl/certs/shop_meinekleinefarm_org.crt'
     ssl_certificate_key '/etc/ssl/private/shop_meinekleinefarm_org.key'
     application_server_role 'mkf_shop_application_server'
