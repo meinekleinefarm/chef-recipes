@@ -7,3 +7,7 @@
 .chef/encrypted_data_bag_secret
 # ignore mac trash files
 .DS_Store
+# ignore vitualbox image ids
+.vagrant
+# ignore encrypted data bag secret
+bootstrap/encrypted_data_bag_secret
