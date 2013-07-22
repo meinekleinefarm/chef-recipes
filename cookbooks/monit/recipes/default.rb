@@ -1,10 +1,17 @@
-package "monit"
-
-cookbook_file '/etc/ssl/certs/monit.meinekleinefarm.org.pem' do
-  owner 'root'
-  group 'root'
-  mode 0600
+certificate_manage "monit" do
+  cert_path "/etc/ssl/"
+  cert_file "#{node[:monit][:address]}.pem"
+  owner "root"
+  group "root"
 end
+
+# cookbook_file '/etc/ssl/certs/monit.meinekleinefarm.org.pem' do
+#   owner 'root'
+#   group 'root'
+#   mode 0600
+# end
+
+package "monit"
 
 sysadmins = search(:users, 'groups:sysadmin')
 
