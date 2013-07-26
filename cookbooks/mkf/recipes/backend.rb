@@ -10,11 +10,6 @@ gem_package "ruby-shadow"
 gem_package "bundler"
 
 include_recipe "users"
-users_manage "users" do
-  group_id 100
-  action :create
-end
-
 users_manage "sudo" do
   group_id 27
   action :create

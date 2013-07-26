@@ -6,6 +6,9 @@
 #
 # All rights reserved - Do Not Redistribute
 #
+
+include_recipe "users"
+
 gem_package "ruby-shadow"
 gem_package "bundler"
 include_recipe "rbenv::default"
@@ -33,6 +36,12 @@ users_manage "sudo" do
   action :create
 end
 
+certificate_manage "shop" do
+  cert_path "/etc/ssl/"
+  key_file "shop.meinekleinefarm.org.key"
+  chain_file "shop.meinekleinefarm.org.crt"
+end
+
 application "mkf_production" do
   path "/var/apps/mkf/production"
   owner "rails"
@@ -45,7 +54,7 @@ application "mkf_production" do
   # Keep the release for debugging
   rollback_on_error false
   action :force_deploy
-  #action :deploy
+  # action :deploy
 
   migrate true
 
@@ -86,7 +95,6 @@ application "mkf_production" do
     precompile_assets true
 
 
-    # database_master_role "mkf_shop_database_server"
     db_creds = Chef::EncryptedDataBagItem.load("passwords", "mkf_shop_db")
 
     database do
@@ -99,6 +107,7 @@ application "mkf_production" do
       password db_creds["password"]
       pool 10
     end
+    # database_master_role "mkf_shop_database_server"
   end
 
   # Apply the unicorn LWRP, also from application_ruby
@@ -119,11 +128,13 @@ application "mkf_production" do
   end
 
   nginx_load_balancer do
-    ssl false
-    ssl_certificate '/etc/ssl/certs/shop_meinekleinefarm_org.crt'
-    ssl_certificate_key '/etc/ssl/private/shop_meinekleinefarm_org.key'
+    only_if { node['roles'].include?('mkf_shop_application_server') }
+    ssl true
+    ssl_certificate '/etc/ssl/certs/shop.meinekleinefarm.org.crt'
+    ssl_certificate_key '/etc/ssl/private/shop.meinekleinefarm.org.key'
     application_server_role 'mkf_shop_application_server'
     server_name 'shop.meinekleinefarm.org'
+    # application_socket ["/var/apps/mkf/production/shared/unicorn.sock"]
     application_port 8080
     template 'mkf_production.conf.erb'
   end
