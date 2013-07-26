@@ -53,8 +53,8 @@ application "mkf_production" do
 
   # Keep the release for debugging
   rollback_on_error false
-  action :force_deploy
-  # action :deploy
+  # action :force_deploy
+  action :deploy
 
   migrate true
 
