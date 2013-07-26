@@ -4,24 +4,6 @@ upstream <%= @resource.application.name %> {
   <% end %>
 }
 
-# Asset server do not serve rails, but asset files
-server {
-  listen 80;
-  server_name asset0.meinekleinefarm.org asset1.meinekleinefarm.org asset2.meinekleinefarm.org asset3.meinekleinefarm.org;
-  root <%= @resource.application.path %>/current/public;
-  access_log /var/log/nginx/<%= @resource.application.name %>_access.log  combined  buffer=4k;
-
-  error_log  /var/log/nginx/<%= @resource.application.name %>_error.log;
-
-
-  expires max;
-  add_header Cache-Control public;
-
-  location / {
-    # Serve files plz;
-  }
-}
-
 server {
   listen <%= @resource.port %> deferred;
   server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
