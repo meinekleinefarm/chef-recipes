@@ -105,7 +105,7 @@ Vagrant.configure("2") do |config|
 
     gem update --no-rdoc --no-ri
     gem install ohai --no-rdoc --no-ri --verbose
-    gem install chef --no-rdoc --no-ri --verbose -v11.4.0
+    gem install chef --no-rdoc --no-ri --verbose -v11.6.0
   fi
 
 SCRIPT
