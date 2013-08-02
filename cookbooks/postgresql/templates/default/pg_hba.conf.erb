@@ -13,6 +13,7 @@
 <% end -%>
 
 # "local" is for Unix domain socket connections only
+local   mkf_production  mkf_production                          trust
 <% if node['postgresql']['version'].to_f < 9.1 -%>
 local   all             all                                     ident
 <% elsif node['postgresql']['version'].to_f >= 9.1 -%>
