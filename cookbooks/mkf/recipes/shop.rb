@@ -61,7 +61,7 @@ application "mkf_production" do
   create_dirs_before_symlink  ["tmp"]
   purge_before_symlink        ["log", "tmp/pids", "public/system"]
   symlink_before_migrate      "database.yml" => "config/database.yml", "memcached.yml" => "config/memcached.yml"
-  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log"
+  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log", "spree" => "public/spree"
 
   before_symlink do
     directory "#{new_resource.shared_path}/log" do
@@ -71,6 +71,13 @@ application "mkf_production" do
       action :create
     end
     directory "#{new_resource.shared_path}/system" do
+      owner new_resource.owner
+      group new_resource.group
+      mode '755'
+      action :create
+    end
+
+    directory "#{new_resource.shared_path}/spree" do
       owner new_resource.owner
       group new_resource.group
       mode '755'
@@ -99,13 +106,12 @@ application "mkf_production" do
 
     database do
       adapter "postgresql"
-      host "localhost"
       encoding "unicode"
       reconnect false
       database "mkf_production"
       username "mkf_production"
       password db_creds["password"]
-      pool 10
+      pool 50
     end
     # database_master_role "mkf_shop_database_server"
   end
@@ -113,8 +119,29 @@ application "mkf_production" do
   # Apply the unicorn LWRP, also from application_ruby
   unicorn do
     # unicorn-specific configuration.
+    preload_app true
+    before_fork <<-EOF
+Signal.trap 'TERM' do
+    puts 'Unicorn master intercepting TERM and sending myself QUIT instead'
+    Process.kill 'QUIT', Process.pid
+  end
+
+  # This option works in together with preload_app true setting
+  # What it does is prevent the master process from holding
+  # the database connection
+  defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
+EOF
+
+after_fork <<-EOF
+Signal.trap 'TERM' do
+    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
+  end
+
+  defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
+EOF
+
     bundler true
-    worker_processes 2
+    worker_processes 8
     worker_timeout 30
     port '8080'
   end
