@@ -139,6 +139,8 @@ SCRIPT
     chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
     chef.validation_key_path = ".chef/mkf-validator.pem"
     chef.encrypted_data_bag_secret_key_path = 'bootstrap/encrypted_data_bag_secret'
+    chef.environment = "vagrant"
+
     chef.add_role("base")
     chef.add_role("memcached_master")
     chef.add_role("mkf_shop_database_server")
