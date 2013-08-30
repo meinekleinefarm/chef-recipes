@@ -17,12 +17,13 @@
 # limitations under the License.
 #
 
-include_recipe "apache2"
+include_recipe "nginx"
 include_recipe "mysql::server"
 include_recipe "mysql::ruby"
 include_recipe "php"
 include_recipe "php::module_mysql"
-include_recipe "apache2::mod_php5"
+include_recipe "php::module_memcache"
+include_recipe "php::module_apc"
 
 if node.has_key?("ec2")
   server_fqdn = node['ec2']['public_hostname']
@@ -30,11 +31,15 @@ else
   server_fqdn = node['fqdn']
 end
 
-node.set_unless['wordpress']['db']['password'] = secure_password
-node.set_unless['wordpress']['keys']['auth'] = secure_password
+node.set_unless['wordpress']['db']['password']      = secure_password
+node.set_unless['wordpress']['keys']['auth']        = secure_password
 node.set_unless['wordpress']['keys']['secure_auth'] = secure_password
-node.set_unless['wordpress']['keys']['logged_in'] = secure_password
-node.set_unless['wordpress']['keys']['nonce'] = secure_password
+node.set_unless['wordpress']['keys']['logged_in']   = secure_password
+node.set_unless['wordpress']['keys']['nonce']       = secure_password
+node.set_unless['wordpress']['salt']['auth']        = secure_password
+node.set_unless['wordpress']['salt']['secure_auth'] = secure_password
+node.set_unless['wordpress']['salt']['logged_in']   = secure_password
+node.set_unless['wordpress']['salt']['nonce']       = secure_password
 
 
 if node['wordpress']['version'] == 'latest'
@@ -53,12 +58,13 @@ else
   remote_file "#{Chef::Config[:file_cache_path]}/wordpress-#{node['wordpress']['version']}.tar.gz" do
     source "#{node['wordpress']['repourl']}/wordpress-#{node['wordpress']['version']}.tar.gz"
     mode "0644"
+    action :create_if_missing
   end
 end
 
 directory node['wordpress']['dir'] do
-  owner "root"
-  group "root"
+  owner "www-data"
+  group "www-data"
   mode "0755"
   action :create
   recursive true
@@ -122,24 +128,18 @@ template "#{node['wordpress']['dir']}/wp-config.php" do
   group "root"
   mode "0644"
   variables(
-    :database        => node['wordpress']['db']['database'],
-    :user            => node['wordpress']['db']['user'],
-    :password        => node['wordpress']['db']['password'],
-    :auth_key        => node['wordpress']['keys']['auth'],
-    :secure_auth_key => node['wordpress']['keys']['secure_auth'],
-    :logged_in_key   => node['wordpress']['keys']['logged_in'],
-    :nonce_key       => node['wordpress']['keys']['nonce']
+    :database         => node['wordpress']['db']['database'],
+    :user             => node['wordpress']['db']['user'],
+    :password         => node['wordpress']['db']['password'],
+    :auth_key         => node['wordpress']['keys']['auth'],
+    :secure_auth_key  => node['wordpress']['keys']['secure_auth'],
+    :logged_in_key    => node['wordpress']['keys']['logged_in'],
+    :nonce_key        => node['wordpress']['keys']['nonce'],
+    :auth_salt        => node['wordpress']['salt']['auth'],
+    :secure_auth_salt => node['wordpress']['salt']['secure_auth'],
+    :logged_in_salt   => node['wordpress']['salt']['logged_in'],
+    :nonce_salt       => node['wordpress']['salt']['nonce'],
+    :wp_lang          => node['wordpress']['locale']
   )
   notifies :write, "log[wordpress_install_message]"
-end
-
-apache_site "000-default" do
-  enable false
-end
-
-web_app "wordpress" do
-  template "wordpress.conf.erb"
-  docroot node['wordpress']['dir']
-  server_name server_fqdn
-  server_aliases node['wordpress']['server_aliases']
 end

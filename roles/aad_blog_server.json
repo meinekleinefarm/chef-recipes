@@ -1,0 +1,41 @@
+{
+  "name": "aad_blog_server",
+  "description": "Blog Server for adopt a day",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "override_attributes": {
+    "php":{
+      "packages": [
+        "php5-cgi",
+        "php5",
+        "php5-dev",
+        "php5-cli",
+        "php-pear",
+        "php5-xmlrpc",
+        "php5-fpm",
+        "php5-curl",
+        "php5-tidy"
+      ]
+    },
+    "wordpress": {
+      "version": "3.6-de_DE",
+      "repourl": "http://de.wordpress.org/",
+      "dir": "/var/www/adoptaday.net",
+      "server_name": "adoptaday.net",
+      "locale": "de_DE",
+      "db": {
+        "database": "adoptaday",
+        "user": "adoptaday_user"
+      }
+    }
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[imagemagick]",
+    "recipe[wordpress]",
+    "recipe[wordpress::aad]"
+  ],
+  "env_run_lists": {
+  }
+}
