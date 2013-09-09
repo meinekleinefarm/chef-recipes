@@ -66,7 +66,7 @@ server {
 
 <% if @resource.ssl %>
 server {
-  listen 443 ssl spdy;
+  listen 443 ssl;
   server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
 
   ssl on;
