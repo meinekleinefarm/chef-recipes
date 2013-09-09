@@ -3,12 +3,39 @@
   "description": "Common configuration",
   "json_class": "Chef::Role",
   "default_attributes": {
+    "authorization": {
+      "sudo": {
+        "passwordless": false,
+        "groups": [
+          "admin",
+          "wheel",
+          "sysadmin",
+          "sudo"
+        ],
+        "users": [
+          "rails"
+        ]
+      }
+    }
   },
   "override_attributes": {
+    "openvpn": {
+      "subnet": "10.8.0.0",
+      "netmask": "255.255.0.0",
+      "key": {
+        "country": "DE",
+        "province": "BE",
+        "city": "Berlin",
+        "org": "Meine kleine Farm",
+        "email": "webmaster@meinekleinefarm.org"
+      }
+    }
   },
   "chef_type": "role",
   "run_list": [
+    "recipe[openssh]",
     "recipe[users]",
+    "recipe[sudo]",
     "recipe[git]",
     "recipe[vim]",
     "recipe[ntp]",
@@ -19,6 +46,9 @@
     "recipe[munin::disks]",
     "recipe[fail2ban]",
     "recipe[munin::fail2ban]",
+    "recipe[monit]",
+    "recipe[monit::ssh]",
+    "recipe[firewall::monit]",
     "recipe[motd-tail]",
     "recipe[chef-client]"
   ],
