@@ -8,6 +8,7 @@
 #
 
 include_recipe "users"
+include_recipe "sudo"
 
 gem_package "ruby-shadow"
 gem_package "bundler"
@@ -34,6 +35,11 @@ end
 users_manage "sudo" do
   group_id 27
   action :create
+end
+
+sudo 'shop' do
+  user      "rails"    # or a username
+  commands  ['/etc/init.d/mkf_production reload']
 end
 
 certificate_manage "shop" do
