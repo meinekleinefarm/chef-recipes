@@ -40,6 +40,7 @@ end
 sudo 'shop' do
   user      "rails"    # or a username
   commands  ['/etc/init.d/mkf_production reload']
+  nopasswd true
 end
 
 certificate_manage "shop" do
