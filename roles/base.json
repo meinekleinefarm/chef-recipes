@@ -6,6 +6,7 @@
     "authorization": {
       "sudo": {
         "passwordless": false,
+        "include_sudoers_d": true,
         "groups": [
           "admin",
           "wheel",
