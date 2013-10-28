@@ -39,7 +39,7 @@ end
 
 sudo 'shop' do
   user      "rails"    # or a username
-  commands  ['/etc/init.d/mkf_production reload']
+  commands  ['/etc/init.d/mkf_production restart']
   nopasswd true
 end
 
@@ -60,8 +60,8 @@ application "mkf_production" do
 
   # Keep the release for debugging
   rollback_on_error false
-  action :force_deploy
-  #action :deploy
+  # action :force_deploy
+  action :deploy
 
   migrate true
 
@@ -106,7 +106,7 @@ application "mkf_production" do
 
     bundler true
     bundle_command "/opt/rbenv/shims/bundle"
-    restart_command "sudo /etc/init.d/mkf_production reload"
+    restart_command "sudo /etc/init.d/mkf_production restart"
     precompile_assets true
 
 

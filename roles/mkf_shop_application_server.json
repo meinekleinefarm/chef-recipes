@@ -5,6 +5,9 @@
   "default_attributes": {
   },
   "override_attributes": {
+    "nginx": {
+      "client_max_body_size": "10M"
+    }
   },
   "chef_type": "role",
   "run_list": [
