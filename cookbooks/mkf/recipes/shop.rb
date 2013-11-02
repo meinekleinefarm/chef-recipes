@@ -128,6 +128,9 @@ application "mkf_production" do
   unicorn do
     # unicorn-specific configuration.
     preload_app true
+    before_exec <<-EOF
+  BUNDLE_GEMFILE=/var/app/mkf/production/current/Gemfile
+EOF
     before_fork <<-EOF
   # This option works in together with preload_app true setting
   # What it does is prevent the master process from holding
@@ -152,6 +155,7 @@ EOF
     worker_processes 8
     worker_timeout 30
     port '8080'
+    pid '/var/apps/mkf/production/shared/pids/unicorn.pid'
     options :backlog => 2048
   end
 
