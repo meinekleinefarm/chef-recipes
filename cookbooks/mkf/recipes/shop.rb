@@ -129,22 +129,22 @@ application "mkf_production" do
     # unicorn-specific configuration.
     preload_app true
     before_fork <<-EOF
-Signal.trap 'TERM' do
-    puts 'Unicorn master intercepting TERM and sending myself QUIT instead'
-    Process.kill 'QUIT', Process.pid
-  end
-
   # This option works in together with preload_app true setting
   # What it does is prevent the master process from holding
   # the database connection
   defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
+
+  old_pid = "/var/apps/mkf/production/shared/pids/unicorn.pid.oldbin"
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
 EOF
 
 after_fork <<-EOF
-Signal.trap 'TERM' do
-    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
-  end
-
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
 EOF
 
@@ -152,6 +152,7 @@ EOF
     worker_processes 8
     worker_timeout 30
     port '8080'
+    options :backlog => 2048
   end
 
   memcached do
