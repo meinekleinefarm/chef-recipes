@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: nginx
-# Recipe:: http_gzip_static_module
+# Recipe:: http_spdy_module
 #
-# Author:: Jamie Winsor (<jamie@vialstudios.com>)
+# Author:: Christoph Buente (<christoph@meinekleinefarm.org>)
 #
-# Copyright 2012, Riot Games
+# Copyright 2013, MeinekleineFarm.org
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,4 +20,4 @@
 #
 
 node.run_state['nginx_configure_flags'] =
-  node.run_state['nginx_configure_flags'] | ["--with-http_spdy_module"]
+  node.run_state['nginx_configure_flags'] | ['--with-http_spdy_module']
