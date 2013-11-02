@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: authz_host
+# Recipe:: filter
 #
 # Copyright 2008-2013, Opscode, Inc.
 #
@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-apache_module 'authz_host'
+apache_module 'filter'
