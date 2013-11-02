@@ -129,7 +129,7 @@ application "mkf_production" do
     # unicorn-specific configuration.
     preload_app true
     before_exec <<-EOF
-  BUNDLE_GEMFILE=/var/app/mkf/production/current/Gemfile
+  BUNDLE_GEMFILE='/var/app/mkf/production/current/Gemfile'
 EOF
     before_fork <<-EOF
   # This option works in together with preload_app true setting
