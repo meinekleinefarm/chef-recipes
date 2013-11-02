@@ -37,3 +37,15 @@ end
 if(node['passenger']['manage_module_conf'])
   include_recipe 'passenger_apache2::mod_rails'
 end
+
+ruby_block "reload_ruby" do
+  block do
+    # Only available on Chef 10.x, but only needed there anyway
+    if node.respond_to?(:load_attribute_by_short_filename)
+      node.load_attribute_by_short_filename('default', 'passenger_apache2')
+    end
+  end
+
+  action :nothing
+  subscribes :create, "ohai[reload]", :immediately
+end
