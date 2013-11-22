@@ -19,6 +19,9 @@ server {
 
   client_max_body_size 10M;
 
+  access_log /var/log/nginx/<%= @resource.application.name %>_access.log  combined  buffer=4k;
+  error_log  /var/log/nginx/<%= @resource.application.name %>_error.log notice;
+
   # Show maintenance page when existent.
   if (-f $document_root/system/maintenance.html) {
     rewrite ^(.*)$ /system/maintenance.html break;
