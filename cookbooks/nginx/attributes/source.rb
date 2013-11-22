@@ -38,5 +38,5 @@ default['nginx']['source']['checksum'] = '0510af71adac4b90484ac8caf3b8bd519a0f71
 default['nginx']['source']['modules']  = %w[
                                            nginx::http_ssl_module
                                            nginx::http_gzip_static_module
-                                           "http_stub_status_module"
+                                           http_stub_status_module
                                          ]
