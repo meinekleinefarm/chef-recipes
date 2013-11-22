@@ -5,6 +5,11 @@
   "default_attributes": {
   },
   "override_attributes": {
+    "nginx": {
+      "status": {
+        "port": 8099
+        }
+      }
   },
   "chef_type": "role",
   "run_list": [
