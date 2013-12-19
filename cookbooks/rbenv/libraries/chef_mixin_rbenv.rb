@@ -38,17 +38,17 @@ class Chef
         default_options = {
           :user => node[:rbenv][:user],
           :group => node[:rbenv][:group],
-          :cwd => rbenv_root,
+          :cwd => rbenv_root_path,
           :env => {
-            'RBENV_ROOT' => rbenv_root
+            'RBENV_ROOT' => rbenv_root_path
           },
           :timeout => 3600
         }
-        shell_out("#{rbenv_binary_path} #{cmd}", Chef::Mixin::DeepMerge.deep_merge!(options, default_options))
+        shell_out("#{rbenv_bin_path}/rbenv #{cmd}", Chef::Mixin::DeepMerge.deep_merge!(options, default_options))
       end
 
       def rbenv_installed?
-        out = shell_out("ls #{rbenv_binary_path}")
+        out = shell_out("ls #{rbenv_bin_path}/rbenv")
         out.exitstatus == 0
       end
 
@@ -81,12 +81,52 @@ class Chef
         prefix = out.stdout.chomp
       end
 
-      def rbenv_root
-        "#{node[:rbenv][:install_prefix]}/rbenv"
+      def rbenv_bin_path
+        ::File.join(rbenv_root_path, "bin")
       end
 
-      def rbenv_binary_path
-        "#{rbenv_root}/bin/rbenv"
+      def rbenv_shims_path
+        ::File.join(rbenv_root_path, "shims")
+      end
+
+      def rbenv_root_path
+        node[:rbenv][:root_path]
+      end
+
+      # Ensures $HOME is temporarily set to the given user. The original
+      # $HOME is preserved and re-set after the block has been yielded
+      # to.
+      #
+      # This is a workaround for CHEF-3940. TL;DR Certain versions of
+      # `git` misbehave if configuration is inaccessible in $HOME.
+      #
+      # More info here:
+      #
+      #   https://github.com/git/git/commit/4698c8feb1bb56497215e0c10003dd046df352fa
+      #
+      def with_home_for_user(username, &block)
+
+        time = Time.now.to_i
+
+        ruby_block "set HOME for #{username} at #{time}" do
+          block do
+            ENV['OLD_HOME'] = ENV['HOME']
+            ENV['HOME'] = begin
+              require 'etc'
+              Etc.getpwnam(username).dir
+            rescue ArgumentError # user not found
+              "/home/#{username}"
+            end
+          end
+        end
+
+        yield
+
+        ruby_block "unset HOME for #{username} #{time}" do
+          block do
+            ENV['HOME'] = ENV['OLD_HOME']
+          end
+        end
       end
     end
   end
