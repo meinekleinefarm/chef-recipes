@@ -60,6 +60,9 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
+
+  config.omnibus.chef_version = :latest
+
   #
   # View the documentation for the provider you're using for more
   # information on available options.
@@ -86,31 +89,6 @@ Vagrant.configure("2") do |config|
   #   puppet.manifests_path = "manifests"
   #   puppet.manifest_file  = "init.pp"
   # end
-
-  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.0-1.ubuntu.11.04_amd64.deb
-  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.2-1.ubuntu.11.04_amd64.deb
-  # https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.4-2.ubuntu.11.04_amd64.deb
-#   $provision_script = <<SCRIPT
-#   if [[ $(which chef-client) != '/usr/bin/chef-client' ]]; then
-#     wget --quiet https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/11.04/x86_64/chef_11.4.4-2.ubuntu.11.04_amd64.deb
-#     dpkg -i chef_11.4.4-2.ubuntu.11.04_amd64.deb
-#     echo 'export PATH="/opt/chef/embedded/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
-#   fi
-# SCRIPT
-
-  $provision_script = <<SCRIPT
-  if [ ! -f /usr/local/bin/chef-client ]; then
-    aptitude update
-    aptitude install -y ruby ruby1.8-dev build-essential wget libruby1.8 rubygems
-
-    gem update --no-rdoc --no-ri
-    gem install ohai --no-rdoc --no-ri --verbose
-    gem install chef --no-rdoc --no-ri --verbose -v11.6.0
-  fi
-
-SCRIPT
-
-  config.vm.provision :shell, :inline => $provision_script
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
