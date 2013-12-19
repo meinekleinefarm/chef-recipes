@@ -19,6 +19,7 @@
 
 module Opscode
   module ChefClient
+    # helper methods for use in chef-client recipe code
     module Helpers
       if Chef::VERSION >= '11.0.0'
         include Chef::DSL::PlatformIntrospection
@@ -29,13 +30,13 @@ module Opscode
       end
 
       def chef_server?
-        if node["platform"] == "windows"
-          node.recipe?("chef-server")
+        if node['platform'] == 'windows'
+          node.recipe?('chef-server')
         else
           Chef::Log.debug("Node has Chef Server Recipe? #{node.recipe?("chef-server")}")
           Chef::Log.debug("Node has Chef Server Executable? #{system("which chef-server > /dev/null 2>&1")}")
           Chef::Log.debug("Node has Chef Server Ctl Executable? #{system("which chef-server-ctl > /dev/null 2>&1")}")
-          node.recipe?("chef-server") || system("which chef-server > /dev/null 2>&1") || system("which chef-server-ctl > /dev/null 2>&1")
+          node.recipe?('chef-server') || system('which chef-server > /dev/null 2>&1') || system('which chef-server-ctl > /dev/null 2>&1')
         end
       end
 
@@ -52,7 +53,13 @@ module Opscode
       end
 
       def root_group
-        ["openbsd", "freebsd", "mac_os_x"].include?(node['platform']) ? "wheel" : "root"
+        if %w{ openbsd freebsd mac_os_x mac_os_x_server }.include?(node['platform'])
+          'wheel'
+        elsif ['windows'].include?(node['platform'])
+          'Administrators'
+        else
+          'root'
+        end
       end
 
       def dir_group
@@ -64,14 +71,13 @@ module Opscode
       end
 
       def create_directories
-        return if ['windows'].include?(node['platform'])
         # dir_owner and dir_group are not found in the block below.
         d_owner = dir_owner
         d_group = dir_group
         %w{run_path cache_path backup_path log_dir conf_dir}.each do |dir|
-          directory node["chef_client"][dir] do
+          directory node['chef_client'][dir] do
             recursive true
-            mode 00750 if dir == "log_dir"
+            mode 00750 if dir == 'log_dir'
             owner d_owner
             group d_group
           end
@@ -79,7 +85,7 @@ module Opscode
       end
 
       def find_chef_client
-        if node["platform"] == "windows"
+        if node['platform'] == 'windows'
           existence_check = :exists?
           # Where will also return files that have extensions matching PATHEXT (e.g.
           # *.bat). We don't want the batch file wrapper, but the actual script.
@@ -94,7 +100,7 @@ module Opscode
         chef_in_sane_path = lambda do
           begin
             Chef::Client::SANE_PATHS.map do |p|
-              p="#{p}/chef-client"
+              p = "#{p}/chef-client"
               p if ::File.send(existence_check, p)
             end.compact.first
           rescue NameError
@@ -104,19 +110,19 @@ module Opscode
 
         # COOK-635 account for alternate gem paths
         # try to use the bin provided by the node attribute
-        if ::File.send(existence_check, node["chef_client"]["bin"])
-          Chef::Log.debug "Using chef-client bin from node attributes"
-          node["chef_client"]["bin"]
+        if ::File.send(existence_check, node['chef_client']['bin'])
+          Chef::Log.debug 'Using chef-client bin from node attributes'
+          node['chef_client']['bin']
         # search for the bin in some sane paths
         elsif Chef::Client.const_defined?('SANE_PATHS') && chef_in_sane_path.call
-          Chef::Log.debug "Using chef-client bin from sane path"
+          Chef::Log.debug 'Using chef-client bin from sane path'
           chef_in_sane_path
         # last ditch search for a bin in PATH
-        elsif (chef_in_path=%x{#{which} chef-client}.chomp) && ::File.send(existence_check, chef_in_path)
-          Chef::Log.debug "Using chef-client bin from system path"
+        elsif (chef_in_path = %x{#{which} chef-client}.chomp) && ::File.send(existence_check, chef_in_path)
+          Chef::Log.debug 'Using chef-client bin from system path'
           chef_in_path
         else
-          raise "Could not locate the chef-client bin in any known path. Please set the proper path by overriding the node['chef_client']['bin'] attribute."
+          fail "Could not locate the chef-client bin in any known path. Please set the proper path by overriding the node['chef_client']['bin'] attribute."
         end
       end
     end
