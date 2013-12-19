@@ -5,11 +5,17 @@
   "default_attributes": {
   },
   "override_attributes": {
+    "postgresql": {
+      "config": {
+        "shared_buffers": "512MB"
+      }
+    }
   },
   "chef_type": "role",
   "run_list": [
     "recipe[postgresql::server]",
-    "recipe[postgresql::ruby]",
+    "recipe[database::postgresql]",
+    "recipe[munin::postgresql]",
     "recipe[mkf::shop_db]"
   ],
   "env_run_lists": {

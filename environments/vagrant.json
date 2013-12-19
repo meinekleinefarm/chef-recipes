@@ -8,6 +8,11 @@
   "default_attributes": {
   },
   "override_attributes": {
+    "postgresql": {
+      "config": {
+        "shared_buffers": "24MB"
+      }
+    }
   }
 }
 
