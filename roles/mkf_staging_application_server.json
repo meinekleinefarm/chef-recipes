@@ -1,0 +1,27 @@
+{
+  "name": "mkf_staging_application_server",
+  "description": "Application server for the mkf shop",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+  },
+  "override_attributes": {
+    "nginx": {
+      "version": "1.4.4",
+      "install_method": "source",
+      "client_max_body_size": "10M"
+    }
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[xml]",
+    "recipe[imagemagick]",
+    "recipe[nginx]",
+    "recipe[munin::nginx]",
+    "recipe[monit::nginx]",
+    "recipe[firewall::nginx]",
+    "recipe[unicorn]",
+    "recipe[mkf::staging]"
+  ],
+  "env_run_lists": {
+  }
+}
