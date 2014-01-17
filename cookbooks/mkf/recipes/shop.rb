@@ -55,7 +55,7 @@ application "mkf_production" do
   group "rails"
 
   repository "git://github.com/meinekleinefarm/shop.git"
-  revision "master"
+  revision "production"
   deploy_key '~/.ssh/id_rsa'
 
   # Keep the release for debugging
