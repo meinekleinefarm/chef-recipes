@@ -37,7 +37,7 @@ users_manage "sudo" do
   action :create
 end
 
-sudo 'shop' do
+sudo 'staging' do
   user      "rails"    # or a username
   commands  ['/etc/init.d/mkf_staging reload']
   nopasswd true
