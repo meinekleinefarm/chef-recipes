@@ -51,7 +51,7 @@ application "mkf_staging" do
   environment_name "staging"
 
   repository "git://github.com/meinekleinefarm/shop.git"
-  revision "master"
+  revision "staging"
   deploy_key '~/.ssh/id_rsa'
 
   # Keep the release for debugging
