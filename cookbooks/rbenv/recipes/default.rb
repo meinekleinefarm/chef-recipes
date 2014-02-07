@@ -49,6 +49,7 @@ when "ubuntu", "debian"
   # "It seems your ruby installation is missing psych (for YAML
   # output). To eliminate this warning, please install libyaml and
   # reinstall your ruby."
+  package 'libyaml-0-2'
   package 'libyaml-dev'
 
   # needed to unpack rubygems
