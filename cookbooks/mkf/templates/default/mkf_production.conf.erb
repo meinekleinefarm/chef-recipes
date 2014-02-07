@@ -22,9 +22,13 @@ server {
   access_log /var/log/nginx/<%= @resource.application.name %>_access.log  combined  buffer=4k;
   error_log  /var/log/nginx/<%= @resource.application.name %>_error.log notice;
 
+  error_page 500 /500.html;
+  error_page 502 503 504 /502.html;
+
   # Show maintenance page when existent.
   if (-f $document_root/system/maintenance.html) {
-    rewrite ^(.*)$ /system/maintenance.html break;
+    rewrite ^(.*)$ /system/maintenance.html last;
+    break;
   }
 
   # No extra asset subdomain in ssl mode
@@ -72,13 +76,19 @@ server {
   listen 443 ssl;
   server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
 
-  ssl on;
-  ssl_certificate <%= @resource.ssl_certificate %>;
-  ssl_certificate_key <%= @resource.ssl_certificate_key %>;
-  ssl_verify_depth 3;
-  ssl_session_cache     shared:SSL:10m;
+  ### SSL cert files ###
+  ssl                       on;
+  ssl_certificate           <%= @resource.ssl_certificate %>;
+  ssl_certificate_key       <%= @resource.ssl_certificate_key %>;
+  ssl_verify_depth          3;
 
-  keepalive_timeout 10;
+  ### Add SSL specific settings here ###
+  ssl_protocols             TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache         shared:SSL:10m;
+  ssl_session_timeout       10m;
+  keepalive_timeout         60;
 
   client_max_body_size 10M;
 

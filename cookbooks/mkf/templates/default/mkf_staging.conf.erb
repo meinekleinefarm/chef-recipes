@@ -22,9 +22,13 @@ server {
   access_log /var/log/nginx/<%= @resource.application.name %>_access.log  combined  buffer=4k;
   error_log  /var/log/nginx/<%= @resource.application.name %>_error.log notice;
 
+  error_page 500 /500.html;
+  error_page 502 503 504 /502.html;
+
   # Show maintenance page when existent.
   if (-f $document_root/system/maintenance.html) {
-    rewrite ^(.*)$ /system/maintenance.html break;
+    rewrite ^(.*)$ /system/maintenance.html last;
+    break;
   }
 
   # No extra asset subdomain in ssl mode

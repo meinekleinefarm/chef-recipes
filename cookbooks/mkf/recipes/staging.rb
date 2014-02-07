@@ -15,14 +15,17 @@ gem_package "bundler"
 include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
-rbenv_ruby "1.9.3-p484" do
-  ruby_version "1.9.3-p484"
-  global true
-end
+%w{ 1.9.3-p484 2.0.0-p353 2.1.0 }.each do |version_name|
 
-%w{bundler rake ruby-shadow pg unicorn}.each do |gem_name|
-  rbenv_gem gem_name do
-    ruby_version "1.9.3-p484"
+  rbenv_ruby version_name do
+    ruby_version version_name
+    global true
+  end
+
+  %w{ bundler rake ruby-shadow pg unicorn }.each do |gem_name|
+    rbenv_gem gem_name do
+      ruby_version version_name
+    end
   end
 end
 
