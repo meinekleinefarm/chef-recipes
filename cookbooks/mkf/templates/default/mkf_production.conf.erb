@@ -73,7 +73,7 @@ server {
 
 <% if @resource.ssl %>
 server {
-  listen 443 ssl;
+  listen 443 ssl spdy;
   server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
 
   ### SSL cert files ###
@@ -99,10 +99,12 @@ server {
     gzip_static on;
     expires max;
     add_header Cache-Control public;
+    add_header  Alternate-Protocol  443:npn-spdy/2;
   }
 
   location / {
     try_files $uri $uri/index.html @unicorn;
+    add_header  Alternate-Protocol  443:npn-spdy/2;
   }
 
   location @unicorn {
@@ -116,6 +118,7 @@ server {
     #  enable this if and only if you use HTTPS, this helps Rack
     # set the proper protocol for doing redirects:
     proxy_set_header X-Forwarded-Proto https;
+    add_header       Front-End-Https   on;
 
     # pass the Host: header from the client right along so redirects
     # can be set properly within the Rack application
