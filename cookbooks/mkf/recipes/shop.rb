@@ -180,3 +180,11 @@ EOF
   end
 
 end
+
+cron 'weekly-report' do
+  weekday 'sun' # Run only on sundays
+  hour    '23'
+  minute  '52'
+  user    'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake report:weekly --silent >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
