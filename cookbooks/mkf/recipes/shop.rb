@@ -186,5 +186,5 @@ cron 'weekly-report' do
   hour    '23'
   minute  '52'
   user    'rails'
-  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake report:weekly --silent >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake report:weekly >> /var/apps/mkf/production/current/log/cron.log 2>&1'
 end
