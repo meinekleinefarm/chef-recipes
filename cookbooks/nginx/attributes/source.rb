@@ -40,5 +40,6 @@ default['nginx']['source']['modules']  = %w[
                                            nginx::http_gzip_static_module
                                            nginx::http_stub_status_module
                                            nginx::http_spdy_module
+                                           nginx::http_dav_module
                                          ]
 default['nginx']['source']['use_existing_user'] = false
