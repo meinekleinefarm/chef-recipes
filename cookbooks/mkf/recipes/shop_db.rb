@@ -20,3 +20,10 @@ postgresql_database "mkf_production" do
   owner "mkf_production"
   action :create
 end
+
+cron 'daily-backup' do
+  hour    '2'
+  minute  '32'
+  user    'rails'
+  command 'cd /var/apps && /usr/bin/pg_dump mkf_production -U mkf_production | gzip > /var/apps/mkf_production_`date "+%d_%m_%Y"`.sql.gz'
+end
