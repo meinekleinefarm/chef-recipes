@@ -49,6 +49,14 @@ certificate_manage "shop" do
   chain_file "shop.meinekleinefarm.org.crt"
 end
 
+certificate_manage "www" do
+  cert_path "/etc/ssl/"
+  key_file "www.meinekleinefarm.org.key"
+  chain_file "www.meinekleinefarm.org.crt"
+  nginx_cert true
+end
+
+
 application "mkf_production" do
   path "/var/apps/mkf/production"
   owner "rails"
