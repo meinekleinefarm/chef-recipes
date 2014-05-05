@@ -1,0 +1,21 @@
+{
+  "name": "data_bag_item_passwords_mkf_shop_db",
+  "json_class": "Chef::DataBagItem",
+  "chef_type": "data_bag_item",
+  "data_bag": "passwords",
+  "raw_data": {
+    "id": "mkf_shop_db",
+    "password": {
+      "encrypted_data": "TOV7nAa0coVGpR0G0Ds3P4dRr4HP3kdOF9nGfv7ykMqCZkt6MY6AHc13GDn5\n0b4h\n",
+      "iv": "s2P5OEXJpDThGqOdhOBlwQ==\n",
+      "version": 1,
+      "cipher": "aes-256-cbc"
+    },
+    "username": {
+      "encrypted_data": "QQ+86ibTP8X3fg5ZcpH8+sFLRcuJgT+w0AKrEVldTPH4kwb8YBrhEgujYv1p\nHOM7\n",
+      "iv": "fBl/ekm3aGPX5rpxYWB9rA==\n",
+      "version": 1,
+      "cipher": "aes-256-cbc"
+    }
+  }
+}
