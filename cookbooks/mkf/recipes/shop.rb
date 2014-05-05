@@ -73,10 +73,14 @@ application "mkf_production" do
 
   migrate true
 
-  create_dirs_before_symlink  ["tmp"]
-  symlink_before_migrate      "database.yml" => "config/database.yml", "memcached.yml" => "config/memcached.yml", "gattica.yml" => "config/gattica.yml", "airbrake.yml" => "config/airbrake.yml"
-  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log", "spree" => "public/spree"
+  create_dirs_before_symlink  ["tmp", "../../shared/pids", "../../shared/system"]
   purge_before_symlink        ["tmp/pids", "public/system"]
+  symlink_before_migrate      "database.yml" => "config/database.yml",
+                              "memcached.yml" => "config/memcached.yml",
+                              "gattica.yml" => "config/gattica.yml",
+                              "airbrake.yml" => "config/airbrake.yml",
+                              "spree_chimpy.rb" => "config/initializers/spree_chimpy.rb"
+  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "spree" => "public/spree"
 
   before_symlink do
     directory "#{new_resource.shared_path}/system" do
@@ -109,6 +113,7 @@ application "mkf_production" do
     bundler true
     bundle_command "/opt/rbenv/shims/bundle"
     restart_command "sudo /etc/init.d/mkf_production reload"
+    environment_name = "production"
     precompile_assets true
 
 
@@ -179,6 +184,17 @@ EOF
     # application_socket ["/var/apps/mkf/production/shared/unicorn.sock"]
     application_port 8080
     template 'mkf_production.conf.erb'
+  end
+
+  nginx_load_balancer do
+    only_if { node['roles'].include?('mkf_shop_application_server') }
+    ssl true
+    ssl_certificate '/etc/ssl/certs/www.meinekleinefarm.org.crt'
+    ssl_certificate_key '/etc/ssl/private/www.meinekleinefarm.org.key'
+    application_server_role 'mkf_shop_application_server'
+    server_name 'www.meinekleinefarm.org'
+    application_port 8080
+    template 'www_production.conf.erb'
   end
 
 end

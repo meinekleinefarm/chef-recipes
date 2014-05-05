@@ -12,18 +12,14 @@ Vagrant.configure("2") do |config|
 
   # set auto_update to false, if do NOT want to check the correct additions
   # version when booting this machine
-  config.vbguest.auto_update = false
+  config.vbguest.auto_update = true
 
   # do NOT download the iso file from a webserver
   config.vbguest.no_remote = true
 
-  # Official Ubuntu 12.04 daily Cloud Image amd64 (No Guest Additions)
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://cloud-images.ubuntu.com/precise/current/precise-server-cloudimg-vagrant-amd64-disk1.box"
-
-
-  # config.vm.box = "precise64"
-  # config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04-i386_chef-11.8.2.box"
+  # Box basics
+  config.vm.box = "chef/ubuntu-12.04"
+  config.vm.box_url = "https://vagrantcloud.com/chef/ubuntu-12.04/version/1/provider/virtualbox.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -37,9 +33,14 @@ Vagrant.configure("2") do |config|
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  config.vm.network :public_network, :bridge => "vnic0"
-  # config.vm.network :bridged, :bridge => "vnic0"
+  config.vm.network "public_network", :bridge => 'vnic0'
 
+  hostname = `hostname -s`
+  config.vm.hostname = "vb-precise64-#{hostname.strip}"
+
+  # If true, then any SSH connections made will enable agent forwarding.
+  # Default value: false
+  config.ssh.forward_agent = true
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -59,6 +60,8 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.customize ["modifyvm", :id, "--usb", "off"]
   end
 
   config.omnibus.chef_version = :latest
@@ -94,14 +97,30 @@ Vagrant.configure("2") do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
-  # config.vm.provision :chef_solo do |chef|
-  #   chef.cookbooks_path = "cookbooks"
-  #   chef.roles_path = "roles"
-  #   chef.data_bags_path = "data_bags"
-  #   chef.add_role "base"
-  #   # You may also specify custom JSON attributes:
-  #   # chef.json = { :mysql_password => "foo" }
-  # end
+  config.vm.provision "chef_solo" do |chef|
+    chef.cookbooks_path                     = "cookbooks"
+    chef.roles_path                         = "roles"
+    chef.data_bags_path                     = "data_bags"
+    chef.encrypted_data_bag_secret_key_path = "bootstrap/encrypted_data_bag_secret"
+    chef.environments_path                  = "environments"
+    chef.environment                        = "vagrant"
+
+
+    chef.add_role("base")
+    chef.add_role("memcached_master")
+    chef.add_role("mkf_shop_database_server")
+    chef.add_role("mkf_shop_application_server")
+
+    # You may also specify custom JSON attributes:
+    chef.json = { :mysql =>
+                  {
+                    :server_debian_password => 'foo',
+                    :server_root_password   => 'bar',
+                    :server_repl_password   => 'foobar'
+                  }
+                }
+  end
+
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
@@ -113,25 +132,25 @@ Vagrant.configure("2") do |config|
   # HTTP instead of HTTPS depending on your configuration. Also change the
   # validation key to validation.pem.
   #
-  config.vm.provision :chef_client do |chef|
-    chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
-    chef.validation_key_path = ".chef/mkf-validator.pem"
-    chef.encrypted_data_bag_secret_key_path = 'bootstrap/encrypted_data_bag_secret'
-    chef.environment = "vagrant"
-
-    chef.add_role("base")
-    chef.add_role("memcached_master")
-    chef.add_role("mkf_shop_database_server")
-    chef.add_role("mkf_shop_application_server")
-
-    #
-    # If you're using the Opscode platform, your validator client is
-    # ORGNAME-validator, replacing ORGNAME with your organization name.
-    #
-
-    # If you have your own Chef Server, the default validation client name is
-    # chef-validator, unless you changed the configuration.
-    #
-    chef.validation_client_name = "mkf-validator"
-  end
+  # config.vm.provision :chef_client do |chef|
+  #   chef.chef_server_url = "https://api.opscode.com/organizations/mkf"
+  #   chef.validation_key_path = ".chef/mkf-validator.pem"
+  #   chef.encrypted_data_bag_secret_key_path = 'bootstrap/encrypted_data_bag_secret'
+  #   chef.environment = "vagrant"
+  #
+  #   chef.add_role("base")
+  #   chef.add_role("memcached_master")
+  #   chef.add_role("mkf_shop_database_server")
+  #   chef.add_role("mkf_shop_application_server")
+  #
+  #   #
+  #   # If you're using the Opscode platform, your validator client is
+  #   # ORGNAME-validator, replacing ORGNAME with your organization name.
+  #   #
+  #
+  #   # If you have your own Chef Server, the default validation client name is
+  #   # chef-validator, unless you changed the configuration.
+  #   #
+  #   chef.validation_client_name = "mkf-validator"
+  # end
 end

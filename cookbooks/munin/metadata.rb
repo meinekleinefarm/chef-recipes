@@ -8,6 +8,7 @@ version           '1.4.0'
 
 depends 'apache2', '~> 1.7'
 depends 'nginx',   '~> 1.8'
+depends 'perl'
 
 supports 'arch'
 supports 'centos'
