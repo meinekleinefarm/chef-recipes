@@ -74,17 +74,11 @@ application "mkf_production" do
   migrate true
 
   create_dirs_before_symlink  ["tmp"]
-  purge_before_symlink        ["log", "tmp/pids", "public/system"]
   symlink_before_migrate      "database.yml" => "config/database.yml", "memcached.yml" => "config/memcached.yml", "gattica.yml" => "config/gattica.yml", "airbrake.yml" => "config/airbrake.yml"
   symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log", "spree" => "public/spree"
+  purge_before_symlink        ["tmp/pids", "public/system"]
 
   before_symlink do
-    directory "#{new_resource.shared_path}/log" do
-      owner new_resource.owner
-      group new_resource.group
-      mode '755'
-      action :create
-    end
     directory "#{new_resource.shared_path}/system" do
       owner new_resource.owner
       group new_resource.group
@@ -111,7 +105,7 @@ application "mkf_production" do
   rails do
     # Rails-specific configuration. See the README in the
     # application_ruby cookbook for more information.
-
+    symlink_logs true
     bundler true
     bundle_command "/opt/rbenv/shims/bundle"
     restart_command "sudo /etc/init.d/mkf_production reload"
