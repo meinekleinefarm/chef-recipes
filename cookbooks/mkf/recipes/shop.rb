@@ -53,7 +53,7 @@ certificate_manage "www" do
   cert_path "/etc/ssl/"
   key_file "www.meinekleinefarm.org.key"
   chain_file "www.meinekleinefarm.org.crt"
-  nginx_cert true
+#  nginx_cert true
 end
 
 

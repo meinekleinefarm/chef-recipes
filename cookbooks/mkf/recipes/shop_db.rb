@@ -7,19 +7,29 @@ db_connection = {
 
 db_creds = Chef::EncryptedDataBagItem.load("passwords", "mkf_shop_db")
 
-postgresql_database_user "mkf_production" do
+postgresql_database_user db_creds["username"] do
   connection db_connection
   password db_creds["password"]
-  database_name 'mkf_production'
-  # privileges [:select,:update,:insert,:delete]
   action :create
 end
 
 postgresql_database "mkf_production" do
   connection db_connection
-  owner "mkf_production"
+  owner db_creds["username"]
   action :create
+  template 'DEFAULT'
+  encoding 'DEFAULT'
+  tablespace 'DEFAULT'
+  connection_limit '-1'
 end
+
+postgresql_database_user db_creds["username"] do
+  connection    db_connection
+  database_name 'mkf_production'
+  privileges    [:all]
+  action        :grant
+end
+
 
 cron 'daily-backup' do
   hour    '2'

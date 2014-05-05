@@ -112,11 +112,17 @@ Vagrant.configure("2") do |config|
     chef.add_role("mkf_shop_application_server")
 
     # You may also specify custom JSON attributes:
-    chef.json = { :mysql =>
-                  {
+    chef.json = {
+                  :mysql => {
                     :server_debian_password => 'foo',
                     :server_root_password   => 'bar',
                     :server_repl_password   => 'foobar'
+                  },
+
+                  :postgresql => {
+                    :password => {
+                      :postgres => "vg"
+                    }
                   }
                 }
   end
