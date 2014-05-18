@@ -6,7 +6,7 @@
   },
   "override_attributes": {
     "nginx": {
-      "version": "1.4.5",
+      "version": "1.4.7",
       "install_method": "source",
       "client_max_body_size": "10M"
     }
@@ -17,6 +17,7 @@
     "recipe[imagemagick]",
     "recipe[nginx]",
     "recipe[munin::nginx]",
+    "recipe[munin::server_nginx]",
     "recipe[monit::nginx]",
     "recipe[firewall::nginx]",
     "recipe[unicorn]",
