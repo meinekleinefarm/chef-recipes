@@ -49,7 +49,7 @@ certificate_manage "shop" do
   chain_file "shop.meinekleinefarm.org.crt"
 end
 
-certificate_manage "www" do
+certificate_manage "www_meinekleinefarm_org" do
   cert_path "/etc/ssl/"
   key_file "www.meinekleinefarm.org.key"
   chain_file "www.meinekleinefarm.org.crt"
@@ -177,24 +177,13 @@ EOF
   nginx_load_balancer do
     only_if { node['roles'].include?('mkf_shop_application_server') }
     ssl true
-    ssl_certificate '/etc/ssl/certs/shop.meinekleinefarm.org.crt'
-    ssl_certificate_key '/etc/ssl/private/shop.meinekleinefarm.org.key'
-    application_server_role 'mkf_shop_application_server'
-    server_name 'shop.meinekleinefarm.org'
-    # application_socket ["/var/apps/mkf/production/shared/unicorn.sock"]
-    application_port 8080
-    template 'mkf_production.conf.erb'
-  end
-
-  nginx_load_balancer do
-    only_if { node['roles'].include?('mkf_shop_application_server') }
-    ssl true
     ssl_certificate '/etc/ssl/certs/www.meinekleinefarm.org.crt'
     ssl_certificate_key '/etc/ssl/private/www.meinekleinefarm.org.key'
     application_server_role 'mkf_shop_application_server'
     server_name 'www.meinekleinefarm.org'
+    # application_socket ["/var/apps/mkf/production/shared/unicorn.sock"]
     application_port 8080
-    template 'www_production.conf.erb'
+    template 'mkf_production.conf.erb'
   end
 
 end
