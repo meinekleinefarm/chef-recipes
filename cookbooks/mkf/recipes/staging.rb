@@ -70,8 +70,8 @@ application "mkf_staging" do
                               "memcached.yml" => "config/memcached.yml",
                               "gattica.yml" => "config/gattica.yml",
                               "airbrake.yml" => "config/airbrake.yml",
-                              "spree_chimpy.rb" => "config/initializers/spree_chimpy.rb"
-
+                              "spree_chimpy.rb" => "config/initializers/spree_chimpy.rb",
+                              "retentiongrid.rb" => "config/initializers/retentiongrid.rb"
   symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log", "spree" => "public/spree"
 
   before_symlink do
