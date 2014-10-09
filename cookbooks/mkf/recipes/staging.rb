@@ -67,6 +67,7 @@ application "mkf_staging" do
   create_dirs_before_symlink  ["tmp"]
   purge_before_symlink        ["log", "tmp/pids", "public/system"]
   symlink_before_migrate      "database.yml" => "config/database.yml",
+                              "application.yml" => "config/application.yml",
                               "memcached.yml" => "config/memcached.yml",
                               "gattica.yml" => "config/gattica.yml",
                               "airbrake.yml" => "config/airbrake.yml",

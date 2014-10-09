@@ -76,6 +76,7 @@ application "mkf_production" do
   create_dirs_before_symlink  ["tmp", "../../shared/pids", "../../shared/system"]
   purge_before_symlink        ["tmp/pids", "public/system"]
   symlink_before_migrate      "database.yml" => "config/database.yml",
+                              "application.yml" => "config/application.yml",
                               "memcached.yml" => "config/memcached.yml",
                               "gattica.yml" => "config/gattica.yml",
                               "airbrake.yml" => "config/airbrake.yml",
