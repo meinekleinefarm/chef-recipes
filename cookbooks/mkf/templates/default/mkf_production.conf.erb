@@ -5,8 +5,13 @@ upstream <%= @resource.application.name %> {
 }
 
 server {
-  listen <%= @resource.port %> deferred;
-  server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
+  server_name <%= @resource.server_name %>;
+  rewrite ^(.*) http://<%= @resource.server_name %>$1 permanent;
+}
+
+server {
+  listen <%= @resource.port %> deferred default;
+  server_name www.<%= @resource.server_name %>;
   <% @resource.static_files.each do |url, path| %>
   location <%= url %> {
     alias <%= path %>;
@@ -72,9 +77,16 @@ server {
 }
 
 <% if @resource.ssl %>
+
 server {
   listen 443 ssl spdy;
-  server_name <%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
+  server_name <%= @resource.server_name %>;
+  return 301 https://www.<%= @resource.server_name %>$request_uri;
+}
+
+server {
+  listen 443 ssl spdy;
+  server_name www.<%= @resource.server_name.is_a?(Array) ? @resource.server_name.join(' ') : @resource.server_name %>;
 
   ### SSL cert files ###
   ssl                       on;

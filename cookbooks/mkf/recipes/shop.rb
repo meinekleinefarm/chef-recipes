@@ -182,7 +182,7 @@ EOF
     ssl_certificate '/etc/ssl/certs/www.meinekleinefarm.org.crt'
     ssl_certificate_key '/etc/ssl/private/www.meinekleinefarm.org.key'
     application_server_role 'mkf_shop_application_server'
-    server_name 'www.meinekleinefarm.org'
+    server_name 'meinekleinefarm.org'
     # application_socket ["/var/apps/mkf/production/shared/unicorn.sock"]
     application_port 8080
     template 'mkf_production.conf.erb'
