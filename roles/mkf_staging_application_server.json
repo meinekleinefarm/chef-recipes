@@ -6,7 +6,7 @@
   },
   "override_attributes": {
     "nginx": {
-      "version": "1.6.1",
+      "version": "1.6.2",
       "install_method": "source",
       "client_max_body_size": "10M"
     }
