@@ -37,6 +37,9 @@ server {
           set $cache_uri 'null cache';
         }
 
+        location = /xmlrpc.php {
+          return 403;
+        }
 
         # Use cached or actual file if they exists, otherwise pass request to WordPress
         location / {
