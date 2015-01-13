@@ -175,6 +175,9 @@ EOF
 
   nginx_load_balancer do
     only_if { node['roles'].include?('mkf_staging_application_server') }
+    ssl true
+    ssl_certificate '/etc/ssl/certs/staging.meinekleinefarm.org.crt'
+    ssl_certificate_key '/etc/ssl/private/staging.meinekleinefarm.org.key'
     application_server_role 'mkf_staging_application_server'
     server_name 'staging.meinekleinefarm.org'
     # application_socket ["/var/apps/mkf/staging/shared/unicorn.sock"]
