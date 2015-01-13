@@ -6,11 +6,11 @@ upstream <%= @resource.application.name %> {
 
 server {
   server_name <%= @resource.server_name %>;
-  rewrite ^(.*) http://<%= @resource.server_name %>$1 permanent;
+  rewrite ^(.*) http://www.<%= @resource.server_name %>$1 permanent;
 }
 
 server {
-  listen <%= @resource.port %> deferred default;
+  listen <%= @resource.port %> deferred;
   server_name www.<%= @resource.server_name %>;
   <% @resource.static_files.each do |url, path| %>
   location <%= url %> {
