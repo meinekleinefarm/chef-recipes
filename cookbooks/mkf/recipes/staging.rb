@@ -64,8 +64,8 @@ application "mkf_staging" do
 
   migrate true
 
-  create_dirs_before_symlink  ["tmp"]
-  purge_before_symlink        ["log", "tmp/pids", "public/system"]
+  create_dirs_before_symlink  ["tmp", "../../shared/pids", "../../shared/system"]
+  purge_before_symlink        ["tmp/pids", "public/system"]
   symlink_before_migrate      "database.yml" => "config/database.yml",
                               "application.yml" => "config/application.yml",
                               "memcached.yml" => "config/memcached.yml",
@@ -73,7 +73,7 @@ application "mkf_staging" do
                               "airbrake.yml" => "config/airbrake.yml",
                               "spree_chimpy.rb" => "config/initializers/spree_chimpy.rb",
                               "retentiongrid.rb" => "config/initializers/retentiongrid.rb"
-  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "log" => "log", "spree" => "public/spree"
+  symlinks                    "system" => "public/system", "pids" => "tmp/pids", "spree" => "public/spree"
 
   before_symlink do
     directory "#{new_resource.shared_path}/log" do
