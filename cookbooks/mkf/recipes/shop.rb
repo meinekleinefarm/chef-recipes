@@ -197,3 +197,17 @@ cron 'weekly-report' do
   user    'rails'
   command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake report:weekly >> /var/apps/mkf/production/current/log/cron.log 2>&1'
 end
+
+cron 'payment-reminder' do
+  minute '55'
+  hour '9'
+  user 'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake payments:check_pending >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
+
+cron 'sitemap.xml' do
+  minute '0'
+  hour '5'
+  user 'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake sitemap:refresh >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
