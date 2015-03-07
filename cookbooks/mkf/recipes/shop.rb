@@ -211,3 +211,25 @@ cron 'sitemap.xml' do
   user 'rails'
   command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake sitemap:refresh >> /var/apps/mkf/production/current/log/cron.log 2>&1'
 end
+
+cron 'retentiongrid' do
+  minute '26'
+  hour '14'
+  user 'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake retentiongrid:submit:customers retentiongrid:submit:products retentiongrid:submit:orders >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
+
+cron 'mailchimp' do
+  minute '42'
+  hour '22'
+  user 'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake spree_chimpy:orders:sync spree_chimpy:users:sync spree_chimpy:users:segment >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
+
+cron 'maintenance' do
+  minute '49'
+  hour '23'
+  user 'rails'
+  command 'cd /var/apps/mkf/production/current/ && RAILS_ENV=production /opt/rbenv/shims/bundle exec rake spree_chimpy:orders:sync spree_chimpy:users:sync spree_chimpy:users:segment >> /var/apps/mkf/production/current/log/cron.log 2>&1'
+end
+
